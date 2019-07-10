@@ -20,6 +20,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->text('address');
             $table->string('zipcode');
+            $table->string('phone');
             $table->timestamps();
         });
     }
