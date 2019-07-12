@@ -46,6 +46,10 @@ class LoginController extends Controller
     {
         $user = $this->validateUser($request);
 
+        if(! $user instanceof User)
+        {
+            return $user;
+        }
         return response()->json(['data' => ['token' => $this->jwt($user), 'userId' => $user->id]], 200);
     }
 }
