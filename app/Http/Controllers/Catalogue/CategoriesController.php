@@ -48,6 +48,10 @@ class CategoriesController extends Controller
 
     public function delete($id)
     {
-        
+        $category = Category::findOrFail($id);
+
+        $category->delete();
+
+        return response()->json(['data' => 'category deleted'], 200);
     }
 }
