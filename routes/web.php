@@ -15,7 +15,7 @@ $router->get('/', function () {
     return response()->json(['data' => 'working'], 200);
 });
 
-$router->group(['namespace' => 'Auth', 'prefix' => 'auth'], function () use ($router) {
+$router->group(['namespace' => 'Auth', 'prefix' => 'auth' , 'middleware' => 'throttle:1,5'], function () use ($router) {
 
     $router->post('/register', ['as' => 'auth.register', 'uses' => 'RegisterController@registerUser']);
 

@@ -56,12 +56,13 @@ $app->singleton(
 |
 */
 
-$app->middleware([
-    App\Http\Middleware\RateLimits::class
-]);
+// $app->middleware([
+//     App\Http\Middleware\RateLimits::class
+// ]);
 
 $app->routeMiddleware([
     'auth' => App\Http\Middleware\Auth::class,
+    'throttle' => App\Http\Middleware\RateLimits::class,
 ]);
 
 /*
