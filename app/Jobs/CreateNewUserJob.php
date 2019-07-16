@@ -26,6 +26,7 @@ class CreateNewUserJob extends Job
     public function handle()
     {
         User::create($this->data);
+        
         return response()->json(['data' => 'user created'], 201);
     }
 }

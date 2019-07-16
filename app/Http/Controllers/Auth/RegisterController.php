@@ -28,7 +28,5 @@ class RegisterController extends Controller
         $data = $this->validateNewUser($request);
         
         return $this->dispatchNow(new CreateNewUserJob($data));
-
-        return response()->json(['data' => 'user created'], 201);
     }
 }
