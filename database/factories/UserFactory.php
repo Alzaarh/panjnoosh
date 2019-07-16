@@ -15,7 +15,7 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
     return [
         'name' => $faker->name,
         'email' => $faker->unique()->email,
-        'password' => '12345',
+        'password' => $faker->word,
         'address' => $faker->address,
         'zipcode' => $faker->postcode,
         'phone' => $faker->phoneNumber,
