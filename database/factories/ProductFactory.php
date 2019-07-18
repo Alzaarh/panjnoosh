@@ -1,5 +1,8 @@
 <?php
-$desc = 
+
+$factory->define(App\Product::class, function (Faker\Generator $faker) {
+    $category = \App\Category::inRandomOrder()->get()->first();
+    $desc = 
     '%h%لورم ایپسوم متن ساختگی%h%%p%لورم ایپسوم 
     متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با 
     استفاده از طراحان گرافیک است. چاپگرها و متون بلکه 
@@ -21,9 +24,6 @@ $desc =
     نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی 
     الخصوص طراحان خلاقی و فرهنگ پیشرو در زبان فارسی ایجاد کرد. %p%'
 ;
-
-$factory->define(App\Product::class, function (Faker\Generator $faker) {
-    $category = \App\Category::inRandomOrder()->get()->first();
     return [
         'title' => $faker->word,
         'short_desc' => $faker->sentence(10),
