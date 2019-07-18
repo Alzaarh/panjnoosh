@@ -21,6 +21,7 @@ class CreateProductsTable extends Migration
             $table->float('price', 10, 2)->nullable();
             $table->tinyInteger('off')->nullable();
             $table->text('desc')->nullable();
+            $table->unsignedInteger('quantity');
             $table->unsignedBigInteger('category_id')->nullable();
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('set null');
             $table->timestamps();

@@ -5,7 +5,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Category extends Model
+class Product extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -14,5 +14,12 @@ class Category extends Model
      */
     protected $fillable = [
         'title',
+        'short_desc',
+        'desc',
+        'price',
+        'off',
+        'quantity',
+        'thumbnail',
+        'category_id',
     ];
 }

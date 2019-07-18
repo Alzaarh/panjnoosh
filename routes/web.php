@@ -34,3 +34,10 @@ $router->group(['namespace' => 'Catalogue', 'prefix' => 'categories'], function 
 
     $router->delete('/{id}', ['as' => 'categories.delete', 'uses' => 'CategoriesController@delete']);
 });
+
+$router->group(['namespace' => 'Catalogue', 'prefix' => 'products'], function () use ($router) {
+
+    $router->get('/', ['as' => 'products.index', 'uses' => 'ProductsController@index']);
+
+    $router->get('/{id}', 'ProductsController@show');
+});

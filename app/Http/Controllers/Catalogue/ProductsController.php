@@ -5,9 +5,16 @@ namespace App\Http\Controllers\Catalogue;
 use App\Http\Controllers\Controller;
 use App\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redis;
+use App\Traits\RedisTrait;
+use App\Traits\ResponseTrait;
 
 class ProductsController extends Controller
 {
+    private const REDIS_KEY = 'products';
+
+    use RedisTrait, ResponseTrait;
+
     private function validateProduct(Request $request)
     {
         $rules = [
@@ -25,12 +32,36 @@ class ProductsController extends Controller
 
     public function index()
     {
-        return response()->json(['data' => Product::all()], 200);
+        $result = $this->setExists(self::REDIS_KEY);
+
+        if($result)
+        {
+            return $this->ok($result);
+        }
+
+        $products = Product::all();
+
+        return $this->createSet(self::REDIS_KEY, $products);
     }
 
     public function show($id)
     {
-        return response()->json(['data' => Product::findOrFail($id)], 200);
+        $result = $this->hashExists(self::REDIS_KEY . ':' . $id);
+
+        if($result)
+        {
+            $this->sSetIncr(self::REDIS_KEY . '_count', self::REDIS_KEY . ':' . $id);
+
+            return $this->ok($result);
+        }
+
+        $product = Product::findOrFail($id);
+
+        $this->createHash(self::REDIS_KEY . ':' . $id, $product);
+
+        $this->sSetIncr(self::REDIS_KEY . '_count', self::REDIS_KEY . ':' . $id);
+
+        return $this->ok($product);
     }
 
     public function create(Request $request)
