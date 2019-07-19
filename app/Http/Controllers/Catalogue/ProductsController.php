@@ -23,6 +23,7 @@ class ProductsController extends Controller
             'thumbnail' => 'bail|required|string',
             'price' => 'bail|numeric|gte:0',
             'off' => 'bail|numeric|gte:0|lte:100',
+            'quantity' => 'bail|required|numeric|gte:0',
             'desc' => 'string',
             'category_id' => 'exists:categories,id',
         ];
@@ -32,16 +33,9 @@ class ProductsController extends Controller
 
     public function index()
     {
-        $result = $this->setExists(self::REDIS_KEY);
-
-        if($result)
-        {
-            return $this->ok($result);
-        }
-
         $products = Product::all();
 
-        return $this->createSet(self::REDIS_KEY, $products);
+        return $this->ok($products);
     }
 
     public function show($id)
@@ -57,7 +51,7 @@ class ProductsController extends Controller
 
         $product = Product::findOrFail($id);
 
-        $this->createHash(self::REDIS_KEY . ':' . $id, $product);
+        $this->createHash(self::REDIS_KEY . ':' . $id, $product->toArray());
 
         $this->sSetIncr(self::REDIS_KEY . '_count', self::REDIS_KEY . ':' . $id);
 
@@ -68,16 +62,32 @@ class ProductsController extends Controller
     {
         $data = $this->validateProduct($request);
 
-        Product::create($data);
+        $product = Product::create($data);
 
-        return response()->json(['data' => 'product created'], 201);
+        $this->addToSet(self::REDIS_KEY, $product);
+
+        return $this->created($product);
     }
 
     public function update(Request $request, $id)
     {
+        $data = $this->validateProduct($request);
+
+        $result = $this->setExists(self::REDIS_KEY);
+
+        $result2 = $this->hashExists(self::REDIS_KEY . ':' . $id);
+
+        if($result2)
+        {
+            $this->createHash(self::REDIS_KEY . ':' . $id, $data);
+
+            return $this->ok('product updated');
+        }
+
+        dd('here');
         $product = Product::findOrFail($id);
 
-        $data = $this->validateProduct($request);
+        
 
         $product->update($data);
 

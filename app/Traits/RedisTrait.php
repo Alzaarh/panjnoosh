@@ -32,6 +32,11 @@ trait RedisTrait
         return $count;
     }
 
+    public function addToSet($key, $member)
+    {
+        return Redis::SADD($key, json_encode($member));
+    }
+
     public function hashExists($key)
     {
         $result = Redis::HGETALL($key);
@@ -48,11 +53,6 @@ trait RedisTrait
 
     public function createHash($key, $data)
     {
-        return Redis::HMSET($key, $data->toArray());
-    }
-
-    public function sSetIncr($key, $member)
-    {
-        return Redis::ZINCRBY($key, 1, $member);
+        return Redis::HMSET($key, $data);
     }
 }

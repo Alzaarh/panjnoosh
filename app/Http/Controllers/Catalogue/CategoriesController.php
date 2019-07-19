@@ -6,9 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
+use App\Traits\ResponseTrait;
+use App\Jobs\IncCategoryViewCountJob;
 
 class CategoriesController extends Controller
 {
+    use ResponseTrait;
+
     private function validateCategory(Request $request)
     {
         $rules = [
@@ -20,44 +24,18 @@ class CategoriesController extends Controller
 
     public function index()
     {
-        if(Redis::exists('categories_count'))
-        {
-            $data = [];
-
-            $categories = Redis::hvals('categories');
-
-            foreach($categories as $category)
-            {
-                array_push($data, json_decode($category));
-            }
-
-            return response()->json(['data' => $data], 200);
-        }
-
         $categories = Category::all();
 
-        Redis::set('categories_count', $categories->count());
-
-        foreach($categories as $category)
-        {
-            Redis::hset('categories', $category->id, $category);
-        }
-
-        return response()->json(['data' => $categories], 200);
+        return $this->ok($categories);
     }
 
     public function show($id)
     {
-        if(Redis::hexists('categories', $id))
-        {
-            return response()->json(['data' => json_decode(Redis::hget('categories', $id))], 200);
-        }
-
         $category = Category::findOrFail($id);
 
-        Redis::hset('categories', $id, $category);
+        dispatch(new IncCategoryViewCountJob('category:' . $category->id));
 
-        return response()->json(['data' => $category], 200);
+        return $this->ok($category);
     }
 
     public function create(Request $request)

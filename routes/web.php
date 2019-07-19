@@ -40,4 +40,8 @@ $router->group(['namespace' => 'Catalogue', 'prefix' => 'products'], function ()
     $router->get('/', ['as' => 'products.index', 'uses' => 'ProductsController@index']);
 
     $router->get('/{id}', 'ProductsController@show');
+
+    $router->post('/', 'ProductsController@create');
+
+    $router->put('/{id}', 'ProductsController@update');
 });

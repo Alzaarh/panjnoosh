@@ -7,11 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
         'title',
         'short_desc',
@@ -21,5 +16,12 @@ class Product extends Model
         'quantity',
         'thumbnail',
         'category_id',
+    ];
+
+    protected $casts = [
+        'quantity' => 'integer',
+        'price' => 'float',
+        'off' => 'integer',
+        'category_id' => 'integer',
     ];
 }
