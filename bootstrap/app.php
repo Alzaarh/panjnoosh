@@ -62,6 +62,8 @@ $app->middleware([
 
 $app->routeMiddleware([
     'auth' => App\Http\Middleware\Auth::class,
+    'is.admin' => \App\Http\Middleware\CheckIfAdmin::class,
+    'add.day' => \App\Http\Middleware\AddADayToJwt::class,
 ]);
 
 /*

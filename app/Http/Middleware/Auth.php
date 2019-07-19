@@ -39,6 +39,8 @@ class Auth
             return response()->json(['errors' => 'unauthorized'], 401);
         }
 
+        $request->auth = $decoded;
+        
         return $next($request);
     }
 }

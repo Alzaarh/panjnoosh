@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Redis;
 
 class ProductsController extends Controller
 {
-    private const REDIS_KEY = 'products';
+    private const REDIS_KEY = 'products_view_count';
 
     use ResponseTrait;
 
@@ -48,7 +48,7 @@ class ProductsController extends Controller
         $product = Product::findOrFail($id);
 
         $product->category = $product->category;
-        
+
         dispatch(new IncProductViewCountJob('product:' . $id));
 
         return $this->ok($product);
@@ -83,5 +83,31 @@ class ProductsController extends Controller
         Redis::ZREM(self::REDIS_KEY, 'product:' . $id);
 
         return $this->ok('product deleted');
+    }
+
+    public function topProducts()
+    {
+        $data = [];
+
+        $result = Redis::ZREVRANGE(self::REDIS_KEY, 0, 4, 'WITHSCORES');
+
+        foreach($result as $key => $value)
+        {
+             $id = explode(':', $key)[1];
+
+             $product = Product::findOrFail($id);
+
+             $object = new \StdClass();
+            
+             $object->product = $product;
+
+             $object->category = $product->category;
+             
+             $object->view_count = $value;
+
+             array_push($data, $object);
+        }
+
+        return $this->ok($data);
     }
 }

@@ -24,6 +24,8 @@ $router->group(['namespace' => 'Auth', 'prefix' => 'auth'], function () use ($ro
 
 $router->group(['namespace' => 'Catalogue', 'prefix' => 'categories'], function () use ($router) {
 
+    $router->get('/top', 'CategoriesController@topCategories');
+
     $router->get('/', ['as' => 'categories.index', 'uses' => 'CategoriesController@index']);
 
     $router->get('/{id}', ['as' => 'categories.show', 'uses' => 'CategoriesController@show']);
@@ -37,13 +39,17 @@ $router->group(['namespace' => 'Catalogue', 'prefix' => 'categories'], function 
 
 $router->group(['namespace' => 'Catalogue', 'prefix' => 'products'], function () use ($router) {
 
+    $router->get('/top', 'ProductsController@topProducts');
+
     $router->get('/', ['as' => 'products.index', 'uses' => 'ProductsController@index']);
 
     $router->get('/{id}', 'ProductsController@show');
 
-    $router->post('/', 'ProductsController@create');
+    $router->post('/', ['middleware' => ['auth', 'is.admin', 'add.day'], 'ProductsController@create']);
 
     $router->put('/{id}', 'ProductsController@update');
 
     $router->delete('/{id}', 'ProductsController@delete');
 });
+
+

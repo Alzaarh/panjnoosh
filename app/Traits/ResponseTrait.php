@@ -23,4 +23,9 @@ trait ResponseTrait
     {
         return response()->json(['data' => $data], 400);
     }
+
+    public function unAuth($data = 'not authorized')
+    {
+        return response()->json(['data' => $data], 401);
+    }
 } 

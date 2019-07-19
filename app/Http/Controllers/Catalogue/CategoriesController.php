@@ -12,6 +12,7 @@ use App\Jobs\IncCategoryViewCountJob;
 class CategoriesController extends Controller
 {
     private const REDIS_KEY = 'categories_view_count';
+    
     use ResponseTrait;
 
     private function validateCategory(Request $request)
@@ -70,5 +71,29 @@ class CategoriesController extends Controller
         Redis::ZREM(self::REDIS_KEY, 'category:' . $id);
         
         return $this->ok('category deleted');
+    }
+
+    public function topCategories()
+    {
+        $data = [];
+
+        $result = Redis::ZREVRANGE(self::REDIS_KEY, 0, 4, 'WITHSCORES');
+
+        foreach($result as $key => $value)
+        {
+             $id = explode(':', $key)[1];
+
+             $category = Category::findOrFail($id);
+
+             $object = new \StdClass();
+            
+             $object->category = $category;
+
+             $object->view_count = $value;
+
+             array_push($data, $object);
+        }
+
+        return $this->ok($data);
     }
 }

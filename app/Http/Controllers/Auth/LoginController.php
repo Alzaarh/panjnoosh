@@ -8,9 +8,16 @@ use App\User;
 use Firebase\JWT\JWT;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Redis;
+use App\Traits\ResponseTrait;
+
 
 class LoginController extends Controller
 {
+    private const REDIS_KEY = 'user';
+
+    use ResponseTrait;
+
     private function validateUser(Request $request)
     {
         $rules = [
@@ -37,6 +44,7 @@ class LoginController extends Controller
             'expirationDate' => Carbon::now()->addDay(),
             'userId' => $user->id,
             'userEmail' => $user->email,
+            'userRole' => $user->role,
         ];
 
         return JWT::encode($payload, env('JWT_KEY'));
@@ -50,6 +58,13 @@ class LoginController extends Controller
         {
             return $user;
         }
-        return response()->json(['data' => ['token' => $this->jwt($user), 'userId' => $user->id]], 200);
+        
+        $data['token'] = $this->jwt($user);
+
+        $data['userId'] = $user->id;
+
+        Redis::SET(self::REDIS_KEY . ':' . $user->id, json_encode($data));
+
+        return $this->ok($data);
     }
 }
