@@ -35,3 +35,34 @@ Could not open input file: /media/alza/New
 Could not open input file: /media/alza/New
 Could not open input file: /media/alza/New
 Could not open input file: /media/alza/New
+PHP Notice:  date_default_timezone_set(): Timezone ID '+04:30' is invalid in /home/alza/projects/panjnoosh/vendor/laravel/lumen-framework/src/Application.php on line 97
+PHP Notice:  date_default_timezone_set(): Timezone ID '+04:30' is invalid in /home/alza/projects/panjnoosh/vendor/laravel/lumen-framework/src/Application.php on line 97
+PHP Notice:  date_default_timezone_set(): Timezone ID '+04:30' is invalid in /home/alza/projects/panjnoosh/vendor/laravel/lumen-framework/src/Application.php on line 97
+[2019-07-19 06:42:04][VwVy3Rry8ar6JE5TLYiAwNYSovWkslrW] Processing: App\Jobs\IncCategoryViewCountJob
+[2019-07-19 06:42:04][VwVy3Rry8ar6JE5TLYiAwNYSovWkslrW] Processed:  App\Jobs\IncCategoryViewCountJob
+[2019-07-19 07:20:00][qXP9XpiUNYjcoyRp9D738BoALF4huAnC] Processing: App\Jobs\IncCategoryViewCountJob
+[2019-07-19 07:20:00][qXP9XpiUNYjcoyRp9D738BoALF4huAnC] Processed:  App\Jobs\IncCategoryViewCountJob
+[2019-07-19 07:21:36][lFSzbmZNeXPYSUvj5Z2tFVUKImhT3nbw] Processing: App\Jobs\IncCategoryViewCountJob
+[2019-07-19 07:21:36][lFSzbmZNeXPYSUvj5Z2tFVUKImhT3nbw] Processed:  App\Jobs\IncCategoryViewCountJob
+[2019-07-19 07:21:39][qxY6mLswPe8wHIBMN8a8pVmpEv2Mfxy6] Processing: App\Jobs\IncCategoryViewCountJob
+[2019-07-19 07:21:39][qxY6mLswPe8wHIBMN8a8pVmpEv2Mfxy6] Processed:  App\Jobs\IncCategoryViewCountJob
+[2019-07-19 07:21:39][rHQqPnkUUqJp5jEnoI5SJYHC0kkuaR1V] Processing: App\Jobs\IncCategoryViewCountJob
+[2019-07-19 07:21:39][rHQqPnkUUqJp5jEnoI5SJYHC0kkuaR1V] Processed:  App\Jobs\IncCategoryViewCountJob
+[2019-07-19 07:21:39][gk62iBFyQuXRDP3fPP0hCT8CUftITptc] Processing: App\Jobs\IncCategoryViewCountJob
+[2019-07-19 07:21:39][gk62iBFyQuXRDP3fPP0hCT8CUftITptc] Processed:  App\Jobs\IncCategoryViewCountJob
+[2019-07-19 07:22:45][HaJqwMSxbfGqk6jcpFrBHEewfPCob63E] Processing: App\Jobs\IncCategoryViewCountJob
+[2019-07-19 07:22:45][HaJqwMSxbfGqk6jcpFrBHEewfPCob63E] Processed:  App\Jobs\IncCategoryViewCountJob
+[2019-07-19 07:23:25][4b6rx7TFSoJdIvLtfZbuUy6hvBj02vQg] Processing: App\Jobs\IncCategoryViewCountJob
+[2019-07-19 07:23:25][4b6rx7TFSoJdIvLtfZbuUy6hvBj02vQg] Processed:  App\Jobs\IncCategoryViewCountJob
+[2019-07-19 07:24:46][e22D3tvRnRzUzydOCSnyl1hF933jAQyE] Processing: App\Jobs\IncCategoryViewCountJob
+[2019-07-19 07:24:46][e22D3tvRnRzUzydOCSnyl1hF933jAQyE] Processed:  App\Jobs\IncCategoryViewCountJob
+[2019-07-19 14:13:32][zwCzBXeRpADjDRKXzBz4aPKSUGt5RXLj] Processing: App\Jobs\IncProductViewCountJob
+[2019-07-19 14:13:32][zwCzBXeRpADjDRKXzBz4aPKSUGt5RXLj] Processed:  App\Jobs\IncProductViewCountJob
+[2019-07-19 14:13:53][aacRoNJR6NRI3KkofYNc1Sq0lwyeojTp] Processing: App\Jobs\IncProductViewCountJob
+[2019-07-19 14:13:53][aacRoNJR6NRI3KkofYNc1Sq0lwyeojTp] Processed:  App\Jobs\IncProductViewCountJob
+[2019-07-19 14:17:02][bcuuY8rRTm185cKPpFsHqJqNmCmMhKcc] Processing: App\Jobs\IncProductViewCountJob
+[2019-07-19 14:17:02][bcuuY8rRTm185cKPpFsHqJqNmCmMhKcc] Processed:  App\Jobs\IncProductViewCountJob
+[2019-07-19 14:17:23][PZTs6UCplE7x6nprIp3O5R3jJ2qb7CDa] Processing: App\Jobs\IncProductViewCountJob
+[2019-07-19 14:17:23][PZTs6UCplE7x6nprIp3O5R3jJ2qb7CDa] Processed:  App\Jobs\IncProductViewCountJob
+[2019-07-19 14:18:14][OMG2toOrvOzmJVKJs2vT5IckfY3aPxSJ] Processing: App\Jobs\IncProductViewCountJob
+[2019-07-19 14:18:14][OMG2toOrvOzmJVKJs2vT5IckfY3aPxSJ] Processed:  App\Jobs\IncProductViewCountJob

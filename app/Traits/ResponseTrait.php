@@ -13,4 +13,14 @@ trait ResponseTrait
     {
         return response()->json(['data' => $data], 201);
     }
+
+    public function methodNotAllowed($data = 'method not allowed')
+    {
+        return response()->json(['data' => $data], 405);
+    }
+
+    public function badRequest($data)
+    {
+        return response()->json(['data' => $data], 400);
+    }
 } 

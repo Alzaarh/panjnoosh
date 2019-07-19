@@ -24,4 +24,9 @@ class Product extends Model
         'off' => 'integer',
         'category_id' => 'integer',
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(\App\Category::class);
+    }
 }

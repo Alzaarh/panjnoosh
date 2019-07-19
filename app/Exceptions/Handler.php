@@ -9,9 +9,13 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use App\Traits\ResponseTrait;
 
 class Handler extends ExceptionHandler
 {
+    use ResponseTrait;
+
     /**
      * A list of the exception types that should not be reported.
      *
@@ -55,7 +59,7 @@ class Handler extends ExceptionHandler
                 $errors[$errorField] = $errorValue[0];
             }
 
-            return response()->json(['errors' => $errors], 400);
+            return $this->badRequest($errors);
         }
 
         if($exception instanceof ThrottleRequestsException)
@@ -66,6 +70,11 @@ class Handler extends ExceptionHandler
         if($exception instanceof ModelNotFoundException)
         {
             return response()->json(['errors' => 'not found'], 404);
+        }
+        
+        if($exception instanceof MethodNotAllowedHttpException)
+        {
+            return $this->methodNotAllowed();
         }
         
         return parent::render($request, $exception);

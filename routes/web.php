@@ -44,4 +44,6 @@ $router->group(['namespace' => 'Catalogue', 'prefix' => 'products'], function ()
     $router->post('/', 'ProductsController@create');
 
     $router->put('/{id}', 'ProductsController@update');
+
+    $router->delete('/{id}', 'ProductsController@delete');
 });

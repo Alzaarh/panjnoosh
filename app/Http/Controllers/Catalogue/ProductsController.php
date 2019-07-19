@@ -5,15 +5,15 @@ namespace App\Http\Controllers\Catalogue;
 use App\Http\Controllers\Controller;
 use App\Product;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redis;
-use App\Traits\RedisTrait;
 use App\Traits\ResponseTrait;
+use App\Jobs\IncProductViewCountJob;
+use Illuminate\Support\Facades\Redis;
 
 class ProductsController extends Controller
 {
     private const REDIS_KEY = 'products';
 
-    use RedisTrait, ResponseTrait;
+    use ResponseTrait;
 
     private function validateProduct(Request $request)
     {
@@ -35,25 +35,21 @@ class ProductsController extends Controller
     {
         $products = Product::all();
 
+        $products->category = $products->map(function ($item, $key) {
+
+            return $item->category;
+        });
+
         return $this->ok($products);
     }
 
     public function show($id)
     {
-        $result = $this->hashExists(self::REDIS_KEY . ':' . $id);
-
-        if($result)
-        {
-            $this->sSetIncr(self::REDIS_KEY . '_count', self::REDIS_KEY . ':' . $id);
-
-            return $this->ok($result);
-        }
-
         $product = Product::findOrFail($id);
 
-        $this->createHash(self::REDIS_KEY . ':' . $id, $product->toArray());
-
-        $this->sSetIncr(self::REDIS_KEY . '_count', self::REDIS_KEY . ':' . $id);
+        $product->category = $product->category;
+        
+        dispatch(new IncProductViewCountJob('product:' . $id));
 
         return $this->ok($product);
     }
@@ -64,34 +60,18 @@ class ProductsController extends Controller
 
         $product = Product::create($data);
 
-        $this->addToSet(self::REDIS_KEY, $product);
-
-        return $this->created($product);
+        return $this->created('product created');
     }
 
     public function update(Request $request, $id)
     {
         $data = $this->validateProduct($request);
 
-        $result = $this->setExists(self::REDIS_KEY);
-
-        $result2 = $this->hashExists(self::REDIS_KEY . ':' . $id);
-
-        if($result2)
-        {
-            $this->createHash(self::REDIS_KEY . ':' . $id, $data);
-
-            return $this->ok('product updated');
-        }
-
-        dd('here');
         $product = Product::findOrFail($id);
-
-        
 
         $product->update($data);
 
-        return response()->json(['data' => 'product updated'], 200);
+        return $this->ok('product updated');
     }
 
     public function delete($id)
@@ -100,6 +80,8 @@ class ProductsController extends Controller
 
         $product->delete();
 
-        return response()->json(['data' => 'category deleted'], 200);
+        Redis::ZREM(self::REDIS_KEY, 'product:' . $id);
+
+        return $this->ok('product deleted');
     }
 }

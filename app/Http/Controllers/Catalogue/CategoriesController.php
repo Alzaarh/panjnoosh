@@ -11,6 +11,7 @@ use App\Jobs\IncCategoryViewCountJob;
 
 class CategoriesController extends Controller
 {
+    private const REDIS_KEY = 'categories_view_count';
     use ResponseTrait;
 
     private function validateCategory(Request $request)
@@ -44,13 +45,7 @@ class CategoriesController extends Controller
 
         $category = Category::create($data);
 
-        if(Redis::exists('categories_count'))
-        {
-            Redis::incr('categories_count');
-        }
-        Redis::hset('categories', $category->id, json_encode($category));
-
-        return response()->json(['data' => 'category created'], 201);
+        return $this->created('category created');
     }
 
     public function update(Request $request, $id)
@@ -63,9 +58,7 @@ class CategoriesController extends Controller
 
         $category->save();
 
-        Redis::hset('categories', $id, json_encode($category));
-
-        return response()->json(['data' => 'category updated'], 200);
+        return $this->ok('category updated');
     }
 
     public function delete($id)
@@ -74,13 +67,8 @@ class CategoriesController extends Controller
 
         $category->delete();
 
-        if(Redis::exists('categories_count'))
-        {
-            Redis::decr('categories_count');
-        }
-
-        Redis::hdel('categories', $id);
-
-        return response()->json(['data' => 'category deleted'], 200);
+        Redis::ZREM(self::REDIS_KEY, 'category:' . $id);
+        
+        return $this->ok('category deleted');
     }
 }
