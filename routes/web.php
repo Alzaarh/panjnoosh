@@ -52,4 +52,11 @@ $router->group(['namespace' => 'Catalogue', 'prefix' => 'products'], function ()
     $router->delete('/{id}', 'ProductsController@delete');
 });
 
+$router->group(['namespace' => 'Admin', 'prefix' => 'admin'],
+function () use ($router) {
+
+    $router->post('/users', ['middleware' => ['auth', 'is.admin'],
+    'uses' => 'UsersController@create']);
+});
+
 
