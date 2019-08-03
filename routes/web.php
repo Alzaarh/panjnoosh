@@ -17,9 +17,9 @@ $router->get('/', function () {
 
 $router->group(['namespace' => 'Auth', 'prefix' => 'auth'], function () use ($router) {
 
-    $router->post('/register', ['as' => 'auth.register', 'uses' => 'RegisterController@registerUser']);
+    $router->post('/signup', ['as' => 'auth.signup', 'uses' => 'AuthController@signup']);
 
-    $router->post('/login', ['as' => 'auth.login', 'uses' => 'LoginController@loginUser']);
+    $router->post('/signin', ['as' => 'auth.signin', 'uses' => 'AuthController@signin']);
 });
 
 $router->group(['namespace' => 'Catalogue', 'prefix' => 'categories'], function () use ($router) {
@@ -52,11 +52,18 @@ $router->group(['namespace' => 'Catalogue', 'prefix' => 'products'], function ()
     $router->delete('/{id}', 'ProductsController@delete');
 });
 
-$router->group(['namespace' => 'Admin', 'prefix' => 'admin'],
+$router->group(
+    ['namespace' => 'Admin', 'prefix' => 'admin',
+    'middleware' => ['auth', 'is.admin', 'add.day']
+    ],
 function () use ($router) {
-
-    $router->post('/users', ['middleware' => ['auth', 'is.admin'],
+    /** users */
+    $router->get('/users', 'UsersController@index');
+    $router->post('/users', ['middleware' => ['auth', 'is.admin', 'add.day'],
     'uses' => 'UsersController@create']);
+
+    /** products */
+    // $router->get('/products', ['middleware' => ['auth']]);
 });
 
 

@@ -6,9 +6,16 @@ use Closure;
 use Illuminate\Http\Request;
 use Firebase\JWT\JWT;
 use App\User;
+use Illuminate\Support\Facades\Redis;
+use Carbon\Carbon;
+use App\Traits\ResponseTrait;
 
 class Auth
 {
+    private const REDIS_KEY = 'user';
+
+    use ResponseTrait;
+
     /**
      * Handle an incoming request.
      *
@@ -26,6 +33,13 @@ class Auth
         }
 
         $decoded = JWT::decode($data, env('JWT_KEY'), ['HS256']);
+        
+        $expDate = new Carbon(Redis::GET(self::REDIS_KEY . ':' . $decoded->userId));
+
+        if($expDate->diffInMinutes() > 1440)
+        {
+            return $this->unauth();
+        }
 
         $user = User::find($decoded->userId);
 

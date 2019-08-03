@@ -10,11 +10,9 @@ use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
-use App\Traits\ResponseTrait;
 
 class Handler extends ExceptionHandler
 {
-    use ResponseTrait;
 
     /**
      * A list of the exception types that should not be reported.
@@ -50,33 +48,6 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        if($exception instanceof ValidationException)
-        {
-            $errors = [];
-
-            foreach($exception->errors() as $errorField => $errorValue)
-            {
-                $errors[$errorField] = $errorValue[0];
-            }
-
-            return $this->badRequest($errors);
-        }
-
-        if($exception instanceof ThrottleRequestsException)
-        {
-            return response()->json(['errors' => 'too many requests'], 429);
-        }
-
-        if($exception instanceof ModelNotFoundException)
-        {
-            return response()->json(['errors' => 'not found'], 404);
-        }
-        
-        if($exception instanceof MethodNotAllowedHttpException)
-        {
-            return $this->methodNotAllowed();
-        }
-        
         return parent::render($request, $exception);
     }
 }
