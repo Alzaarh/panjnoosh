@@ -48,6 +48,15 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        if($exception instanceof ValidationException) {
+            return response()->json(['errors' => $exception->errors()], 400);
+        }
+        if($exception instanceof ModelNotFoundException) {
+            return response()->json(['errors' => 'پیدا نشد'], 404);
+        }
+        if($exception instanceof AuthorizationException) {
+            return response()->json(['errors' => 'دسترسی غیرمجاز'], 401);
+        }
         return parent::render($request, $exception);
     }
 }

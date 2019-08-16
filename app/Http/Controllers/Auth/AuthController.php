@@ -8,51 +8,22 @@ use App\Models\User;
 use Firebase\JWT\JWT;
 use Carbon\Carbon;
 use App\Http\Resources\User as UserResource;
-use App\Utils\Response;
+use App\Utils\Errors;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
-class AuthController extends Controller
-{
-    use Response;
-
-    public function signup(Request $request)
-    {
-        $input = $this->validateSignup($request);
-
-        $userData = $this->transform($input);
-
+class AuthController extends Controller {
+    use Errors;
+    //Register user
+    public function signup(Request $request) {
+        $validInput = $this->validateSignup($request);
+        $userData = $this->transform($validInput);
         $user = User::create($userData);
-
         $user->token = $this->createAuthToken($user);
-
         return (new UserResource($user))->response(201);
     }
-
-    public function signin(Request $request)
-    {
-        $input = $this->validateSignin($request);
-
-        $userData = $this->transform($input);
-
-        $user = User::where('username', $userData['username'])->first();
-
-        if(!$user)
-        {
-            return $this->unprocEntity();
-        }
-
-        if(!Hash::check($userData['password'], $user->password))
-        {
-            return $this->unprocEntity('passwords do not match');
-        }
-
-        $user->token = $this->createAuthToken($user);
-
-        return (new UserResource($user));
-    }
-
-    private function validateSignup(Request $request)
-    {
+    //Validate user input for registration
+    private function validateSignup(Request $request) {
         $rules = [
             'username' => [
                 'bail',
@@ -73,12 +44,43 @@ class AuthController extends Controller
                 'confirmed',
             ],
         ];
-
-        return $this->validate($request, $rules);
+        return $this->validate($request, $rules, [
+            'username.*' => $this->badUsername,
+            'password.*' => $this->badPassword
+        ]);
     }
-
-    private function validateSignin(Request $request)
-    {
+    //Transform user input to database accepted input
+    private function transform(array $input) {
+        return [
+            'username' => $input['username'],
+            'password' => $input['password'],
+        ];
+    }
+    //Create JWT token
+    private function createAuthToken(User $user) {
+        $key = env('JWT_KEY');
+        $payload = [
+            'username' => $user->username,
+            'createdAt' => Carbon::now(),
+            'expireAt' => Carbon::now()->addDay(),
+        ];
+        return  JWT::encode($payload, $key);
+    }
+    //Login user
+    public function signin(Request $request) {
+        $validInput = $this->validateSignin($request);
+        $userData = $this->transform($validInput);
+        $user = User::where('username', $userData['username'])->first();
+        if(!$user || !Hash::check($userData['password'], $user->password)) {
+            throw ValidationException::withMessages([
+                'username' => $this->badRequest,
+            ]);
+        }
+        $user->token = $this->createAuthToken($user);
+        return (new UserResource($user));
+    }
+    //Validate user input for login
+    private function validateSignin(Request $request) {
         $rules = [
             'username' => [
                 'bail',
@@ -97,28 +99,9 @@ class AuthController extends Controller
                 'regex:/^[0-9a-zA-zالف-ی.-_!]*$/',
             ],
         ];
-
-        return $this->validate($request, $rules);
-    }
-
-    private function transform(array $input)
-    {
-        return [
-            'username' => $input['username'],
-            'password' => $input['password'],
-        ];
-    }
-
-    private function createAuthToken(User $user)
-    {
-        $key = env('JWT_KEY');
-
-        $payload = [
-            'username' => $user->username,
-            'createdAt' => Carbon::now(),
-            'expireAt' => Carbon::now()->addDay(),
-        ];
-
-        return  JWT::encode($payload, $key);
+        return $this->validate($request, $rules, [
+            'username.*' => $this->badUsername,
+            'password.*' => $this->badPassword
+        ]);
     }
 }

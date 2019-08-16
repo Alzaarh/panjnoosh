@@ -5,16 +5,14 @@ namespace App\Http\Controllers\Catalogue;
 use App\Http\Controllers\Controller;
 use App\Product;
 use Illuminate\Http\Request;
-use App\Traits\ResponseTrait;
 use App\Jobs\IncProductViewCountJob;
 use Illuminate\Support\Facades\Redis;
 
-class ProductsController extends Controller
-{
+class ProductsController extends Controller {
     private const REDIS_KEY = 'products_view_count';
-
-    use ResponseTrait;
-
+    public function __construct() {
+        $this->middleware('check.pagination', ['only' => ['index']]);
+    }
     private function validateProduct(Request $request)
     {
         $rules = [
@@ -30,9 +28,8 @@ class ProductsController extends Controller
 
         return $this->validate($request, $rules);
     }
-
-    public function index()
-    {
+    //Get all products
+    public function index() {
         $products = Product::all();
 
         $products->category = $products->map(function ($item, $key) {

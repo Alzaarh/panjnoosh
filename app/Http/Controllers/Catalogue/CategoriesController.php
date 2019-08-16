@@ -3,97 +3,52 @@
 namespace App\Http\Controllers\Catalogue;
 
 use App\Http\Controllers\Controller;
-use App\Category;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
-use App\Traits\ResponseTrait;
-use App\Jobs\IncCategoryViewCountJob;
+use App\Jobs\IncrementCategoryViewCount;
+use Illuminate\Validation\ValidationException;
+use App\Utils\Errors;
+use App\Http\Resources\Category as CategoryResource;
 
-class CategoriesController extends Controller
-{
+class CategoriesController extends Controller {
+    use Errors;
     private const REDIS_KEY = 'categories_view_count';
-    
-    use ResponseTrait;
-
-    private function validateCategory(Request $request)
-    {
-        $rules = [
-            'title' => 'bail|required|string',
-        ];
-
-        return $this->validate($request, $rules);
+    //Get all categories
+    public function index(Request $request) {
+        $this->validatePaginate($request);
+        return CategoryResource::collection(Category::paginate($request->query('paginate') ?? null));
     }
-
-    public function index()
-    {
-        $categories = Category::all();
-
-        return $this->ok($categories);
-    }
-
-    public function show($id)
-    {
-        $category = Category::findOrFail($id);
-
-        dispatch(new IncCategoryViewCountJob('category:' . $category->id));
-
-        return $this->ok($category);
-    }
-
-    public function create(Request $request)
-    {
-        $data = $this->validateCategory($request);
-
-        $category = Category::create($data);
-
-        return $this->created('category created');
-    }
-
-    public function update(Request $request, $id)
-    {
-        $data = $this->validateCategory($request);
-
-        $category = Category::findOrFail($id);
-
-        $category->title = $data['title'];
-
-        $category->save();
-
-        return $this->ok('category updated');
-    }
-
-    public function delete($id)
-    {
-        $category = Category::findOrFail($id);
-
-        $category->delete();
-
-        Redis::ZREM(self::REDIS_KEY, 'category:' . $id);
-        
-        return $this->ok('category deleted');
-    }
-
-    public function topCategories()
-    {
-        $data = [];
-
-        $result = Redis::ZREVRANGE(self::REDIS_KEY, 0, 4, 'WITHSCORES');
-
-        foreach($result as $key => $value)
-        {
-             $id = explode(':', $key)[1];
-
-             $category = Category::findOrFail($id);
-
-             $object = new \StdClass();
-            
-             $object->category = $category;
-
-             $object->view_count = $value;
-
-             array_push($data, $object);
+    //Check if paginate query is numeric or less than allowed number
+    private function validatePaginate(Request $request) {
+        if(!preg_match('/^[0-9]*$/', $request->query('paginate')) || $request->query('paginate') > Category::$maxPaginate) {
+            throw ValidationException::withMessages([
+                'paginate' => [
+                    $this->badRequest,
+                ],
+            ]);
         }
-
-        return $this->ok($data);
+    }
+    //Get one category
+    public function show(Request $request, $id) {
+        $this->validatewithProduct($request);
+        $category = Category::findOrFail($id);
+        dispatch(new IncrementCategoryViewCount($category->id, self::REDIS_KEY));
+        return (new CategoryResource($category));
+    }
+    //Check if with_product query is boolean
+    private function validatewithProduct($request) {
+        $this->validate($request, ['with_product' => 'boolean'], ['with_product.*' => $this->badRequest]);
+    }
+    //Get most viewed categories
+    public function mostViewedCategories() {
+        $mostViewedCategories = [];
+        $mostViewedCategoriesIDs = Redis::ZREVRANGE(self::REDIS_KEY, 0, 9, 'WITHSCORES');
+        foreach($mostViewedCategoriesIDs as $categoryID => $categoryView) {
+             $category = Category::find($categoryID);
+             $category->view_count = $categoryView;
+             array_push($mostViewedCategories, $category);
+        }
+        return CategoryResource::collection(collect($mostViewedCategories));
     }
 }
