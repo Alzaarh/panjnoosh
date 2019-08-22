@@ -9,10 +9,17 @@ use App\Http\Resources\User as UserResource;
 
 class UsersController extends Controller {
     use Errors;
+    public function index(Request $request) {
+        if($request->query('paginate') == 1) {
+            return UserResource::collection(User::paginate());
+        }
+        return UserResource::collection(User::get()->take(User::$number));
+    }
     public function __construct() {
         $this->middleware('auth');
         $this->middleware('is.admin', ['only' => [
             'create',
+            'index',
         ]]);
     }
     //Admin create a user

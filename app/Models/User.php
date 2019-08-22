@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 
 class User extends Model {
+    //number of users returned when no pagination is present
+    public static $number = 50;
     protected $fillable = [
         'username',
         'password',

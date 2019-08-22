@@ -13,9 +13,12 @@ class User extends Resource {
             'username' => $this->username,
             'email' => $this->email,
             'token' => $this->when($this->token, $this->token),
-            'role' => $this->when(Request::instance()->user->role == 'admin', $this->role),
-            'createdAt' => $this->when(Request::instance()->user->role == 'admin', $this->created_at),
-            'updatedAt' => $this->when(Request::instance()->user->role == 'admin', $this->updated_at),
+            'role' => $this->when(isset(Request::instance()->user) &&
+                Request::instance()->user->role == 'admin', $this->role),
+            'createdAt' => $this->when(isset(Request::instance()->user) &&
+                Request::instance()->user->role == 'admin', $this->created_at),
+            'updatedAt' => $this->when(isset(Request::instance()->user) && 
+                Request::instance()->user->role == 'admin', $this->updated_at),
         ];
     }
 }

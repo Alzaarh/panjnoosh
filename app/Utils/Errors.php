@@ -7,4 +7,7 @@ trait Errors {
     public $badUsername = 'نام کاربری نامعتبر';
     public $badPassword = 'رمز عبور نامعتبر';
     public $badToken = 'توکن نامعتبر';
+    public $badEmail = 'ایمیل نامعتبر';
+    public $badTitle = 'عنوان نامعتبر';
+    public $badBody = 'پیام نامعتبر';
 }

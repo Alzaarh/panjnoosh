@@ -41,7 +41,6 @@ class AuthController extends Controller {
                 'min:5',
                 'max:30',
                 'regex:/^[0-9a-zA-zالف-ی.-_!]*$/',
-                'confirmed',
             ],
         ];
         return $this->validate($request, $rules, [
