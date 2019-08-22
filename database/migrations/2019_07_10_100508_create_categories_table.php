@@ -10,6 +10,7 @@ class CreateCategoriesTable extends Migration {
             $table->bigIncrements('id');
             $table->string('title');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
     public function down() {

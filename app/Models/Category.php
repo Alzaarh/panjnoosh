@@ -3,10 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model {
-    //Maximum number of resource returned for pagination
-    public static $maxPaginate = 50;
+    use SoftDeletes;
+    
+    protected $fillable = [
+        'title',
+    ];
     //One to many relation with Product
     public function products() {
         return $this->hasMany(\App\Models\Product::class);
