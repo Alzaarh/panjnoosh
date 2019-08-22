@@ -20,6 +20,8 @@ class ProductsController extends Controller {
         foreach($products as $product) {
 
             $product->category = $product->category;
+
+            $product->discount = $product->discount()->first();
         }
 
         return ProductResource::collection($products);
@@ -30,6 +32,8 @@ class ProductsController extends Controller {
         $product = Product::findOrFail($id);
 
         $product->category = $product->category;
+
+        $product->discount = $product->discount()->first();
 
         dispatch(new IncProductViewCountJob('product:' . $id));
 

@@ -23,6 +23,8 @@ class Product extends Resource {
 
             'price' => $this->price,
 
+            'discount' => empty($this->discount) ? 0 : new \App\Http\Resources\Discount($this->discount),
+
             'quantity' => $this->quantity,
 
             'category' => new CategoryResource($this->category),

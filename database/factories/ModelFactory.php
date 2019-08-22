@@ -1,8 +1,8 @@
 <?php
 
 use Josh\Faker\Faker;
+use Carbon\Carbon;
 
-// User factory
 $factory->define(App\Models\User::class, function (\Faker\Generator $faker) {
     return [
         'password' => '12345',
@@ -49,8 +49,9 @@ $factory->define(App\Models\Product::class, function (\Faker\Generator $faker) {
         'category_id' => $faker->randomElement(\App\Models\Category::pluck('id')),
     ];
 });
-//ProductPicture factory
+
 $factory->define(App\Models\ProductPicture::class, function (\Faker\Generator $faker) {
+    
     $productPictures = [
         '/img/product-1.jpg',
         '/img/product-2.jpg',
@@ -62,4 +63,15 @@ $factory->define(App\Models\ProductPicture::class, function (\Faker\Generator $f
         'product_id' => $faker->randomElement(\App\Models\Product::pluck('id')),
         'path' => $faker->randomElement($productPictures),
     ];
+});
+
+$factory->define(App\Models\Discount::class, function (\Faker\Generator $faker) {
+    
+    return [
+
+        'product_id' => $faker->unique()->randomElement(App\Models\Product::pluck('id')),
+
+        'off' => $faker->numberBetween(1, 100),
+    ];
+    
 });
