@@ -3,52 +3,37 @@
 namespace App\Http\Controllers\Catalogue;
 
 use App\Http\Controllers\Controller;
-use App\Product;
+use App\Models\Product;
+use App\Http\Resources\Product as ProductResource;
 use Illuminate\Http\Request;
 use App\Jobs\IncProductViewCountJob;
 use Illuminate\Support\Facades\Redis;
 
 class ProductsController extends Controller {
+
     private const REDIS_KEY = 'products_view_count';
-    public function __construct() {
-        $this->middleware('check.pagination', ['only' => ['index']]);
-    }
-    private function validateProduct(Request $request)
-    {
-        $rules = [
-            'title' => 'bail|required|string',
-            'short_desc' => 'string',
-            'thumbnail' => 'bail|required|string',
-            'price' => 'bail|numeric|gte:0',
-            'off' => 'bail|numeric|gte:0|lte:100',
-            'quantity' => 'bail|required|numeric|gte:0',
-            'desc' => 'string',
-            'category_id' => 'exists:categories,id',
-        ];
 
-        return $this->validate($request, $rules);
-    }
-    //Get all products
     public function index() {
-        $products = Product::all();
+        
+        $products = Product::paginate();
 
-        $products->category = $products->map(function ($item, $key) {
+        foreach($products as $product) {
 
-            return $item->category;
-        });
+            $product->category = $product->category;
+        }
 
-        return $this->ok($products);
+        return ProductResource::collection($products);
     }
 
-    public function show($id)
-    {
+    public function show($id) {
+
         $product = Product::findOrFail($id);
 
         $product->category = $product->category;
 
         dispatch(new IncProductViewCountJob('product:' . $id));
 
-        return $this->ok($product);
+        return new ProductResource($product);
     }
 
     public function create(Request $request)

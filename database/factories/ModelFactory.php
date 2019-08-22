@@ -11,21 +11,41 @@ $factory->define(App\Models\User::class, function (\Faker\Generator $faker) {
         'email' => $faker->unique()->safeEmail,
     ];
 });
-// Category factory
+
 $factory->define(App\Models\Category::class, function (\Faker\Generator $faker) {
+
+    $categoryNames = [];
+
+    for($i = 1; $i <= 100; $i++) {
+        array_push($categoryNames, 'دسته‌بندی' . $i);
+    }
+
     return [
-        'title' => Faker::firstname(),
+
+        'title' => $faker->randomElement($categoryNames),
+
+        'details' => 'لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.',
     ];
 });
-//Product factory
+
 $factory->define(App\Models\Product::class, function (\Faker\Generator $faker) {
+
     $shortPersionLorem = 'لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.';
-    $persianDescription = '';
+
+    $logos = ['product-1.jpg', 'product-2.jpg', 'product-3.jpg'];
+
     return [
+
         'title' => Faker::firstname(),
+
         'short_description' => (rand(1, 10) % 2) == 0 ? $shortPersionLorem : null,
+
         'price' => $faker->randomFloat(3, 0, 1000000),
+
         'quantity' => $faker->randomNumber(2),
+        
+        'main_logo' => 'imgs/' . $faker->randomElement($logos),
+
         'category_id' => $faker->randomElement(\App\Models\Category::pluck('id')),
     ];
 });

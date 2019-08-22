@@ -10,4 +10,6 @@ trait Errors {
     public $badEmail = 'ایمیل نامعتبر';
     public $badTitle = 'عنوان نامعتبر';
     public $badBody = 'پیام نامعتبر';
+
+    public $badDetails = 'جزییات نامعتبر';
 }
