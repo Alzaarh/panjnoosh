@@ -15,13 +15,13 @@ class ProductsController extends Controller {
 
     public function index() {
         
-        $products = Product::paginate();
+        $products = Product::active()->paginate();
 
         foreach($products as $product) {
 
             $product->category = $product->category;
 
-            $product->discount = $product->discount()->first();
+            $product->discount = $product->discounts()->first();
         }
 
         return ProductResource::collection($products);
@@ -29,11 +29,11 @@ class ProductsController extends Controller {
 
     public function show($id) {
 
-        $product = Product::findOrFail($id);
+        $product = Product::active()->findOrFail($id);
 
         $product->category = $product->category;
 
-        $product->discount = $product->discount()->first();
+        $product->discount = $product->discounts()->first();
 
         dispatch(new IncProductViewCountJob('product:' . $id));
 

@@ -47,20 +47,27 @@ $factory->define(App\Models\Product::class, function (\Faker\Generator $faker) {
         'main_logo' => 'imgs/' . $faker->randomElement($logos),
 
         'category_id' => $faker->randomElement(\App\Models\Category::pluck('id')),
+
+        'active' => rand(1, 100) > 90 ? false : true,
     ];
 });
 
 $factory->define(App\Models\ProductPicture::class, function (\Faker\Generator $faker) {
-    
     $productPictures = [
-        '/img/product-1.jpg',
-        '/img/product-2.jpg',
-        '/img/product-3.jpg',
-        '/img/product-4.jpg',
-        '/img/product-5.jpg',
+        '/imgs/pp-1.jpg',
+
+        '/imgs/pp-2.jpg',
+
+        '/imgs/pp-3.jpg',
+
+        '/imgs/pp-4.jpg',
+
+        '/imgs/pp.jpg',
     ];
+
     return [
         'product_id' => $faker->randomElement(\App\Models\Product::pluck('id')),
+        
         'path' => $faker->randomElement($productPictures),
     ];
 });

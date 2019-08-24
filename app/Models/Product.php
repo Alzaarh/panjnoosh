@@ -7,12 +7,16 @@ use Carbon\Carbon;
 
 class Product extends Model {
     
+    public $casts = [
+        'active' => 'boolean',
+    ];
+
     public function category() {
         
         return $this->belongsTo(\App\Models\Category::class);
     }
 
-    public function discount() {
+    public function discounts() {
         
         return $this->hasMany(\App\Models\Discount::class)
             ->where(function ($query) {
@@ -24,5 +28,13 @@ class Product extends Model {
                 $query->where('ending_at', '>=', Carbon::now()->toDateString())
                 ->orWhere('ending_at', null);
             });
+    }
+
+    public function pictures() {
+        return $this->hasMany(\App\Models\ProductPicture::class);
+    }
+
+    public function scopeActive($query) {
+        return $query->where('active', true);
     }
 }

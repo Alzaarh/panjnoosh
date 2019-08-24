@@ -25,9 +25,13 @@ class Product extends Resource {
 
             'discount' => empty($this->discount) ? 0 : new \App\Http\Resources\Discount($this->discount),
 
+            'pictures' => \App\Http\Resources\ProductPicture::collection($this->pictures),
+
             'quantity' => $this->quantity,
 
             'category' => new CategoryResource($this->category),
+
+            'active' => $this->active,
         ];
     }
 }

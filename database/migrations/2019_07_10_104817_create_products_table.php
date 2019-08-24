@@ -24,6 +24,8 @@ class CreateProductsTable extends Migration {
 
             $table->unsignedInteger('quantity');
 
+            $table->boolean('active')->default(true);
+
             $table->unsignedBigInteger('category_id')->nullable();
 
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('set null');
