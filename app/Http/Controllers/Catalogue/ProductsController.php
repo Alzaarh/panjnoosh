@@ -12,21 +12,15 @@ use Illuminate\Support\Facades\Redis;
 
 class ProductsController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-
-        $products = Product::active()->paginate();
-
+        $products = Product::where('title', 'like', '%' . $request->query('search') . '%')->paginate();
         foreach ($products as $product) {
-
             $product->category = $product->category;
-
             $product->discount = $product->discounts()->first();
         }
-
         return ProductResource::collection($products);
     }
-
     public function show($id)
     {
         $product = Product::findOrFail($id);

@@ -3,13 +3,11 @@
 namespace App\Exceptions;
 
 use Exception;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\ValidationException;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Illuminate\Http\Exceptions\ThrottleRequestsException;
-use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -48,13 +46,13 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        if($exception instanceof ValidationException) {
+        if ($exception instanceof ValidationException) {
             return response()->json(['errors' => $exception->errors()], 400);
         }
-        if($exception instanceof ModelNotFoundException) {
+        if ($exception instanceof ModelNotFoundException) {
             return response()->json(['errors' => 'پیدا نشد'], 404);
         }
-        if($exception instanceof AuthorizationException) {
+        if ($exception instanceof AuthorizationException) {
             return response()->json(['errors' => 'دسترسی غیرمجاز'], 401);
         }
         return parent::render($request, $exception);
