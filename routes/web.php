@@ -1,6 +1,6 @@
 <?php
 
-$router->group(['namespace' => 'Auth','prefix' => 'auth'], function () use ($router) {
+$router->group(['namespace' => 'Auth', 'prefix' => 'auth'], function () use ($router) {
     $router->post('/signup', ['as' => 'auth.signup', 'uses' => 'AuthController@signup']);
     $router->post('/signin', ['as' => 'auth.signin', 'uses' => 'AuthController@signin']);
 });
@@ -19,11 +19,9 @@ $router->group(['namespace' => 'Catalogue'], function () use ($router) {
         $router->get('/{id}/products', ['as' => 'categories.products', 'uses' => 'CategoriesController@indexProducts']);
     });
 
-
     $router->group(['prefix' => '/products'], function () use ($router) {
-
-        $router->get('/', ['as' => 'products.index','uses' => 'ProductsController@index']);
-
+        $router->get('/top', 'ProductsController@topProducts');
+        $router->get('/', ['as' => 'products.index', 'uses' => 'ProductsController@index']);
         $router->get('/{id}', ['as' => 'products.show', 'uses' => 'ProductsController@show']);
     });
 });
@@ -37,6 +35,3 @@ $router->group(['prefix' => '/users'], function () use ($router) {
 });
 
 $router->post('/contact_us', ['as' => 'contactUs.create', 'uses' => 'ContactUsController@create']);
-
-
-

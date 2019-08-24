@@ -3,21 +3,21 @@
 namespace App\Http\Controllers\Catalogue;
 
 use App\Http\Controllers\Controller;
-use App\Models\Product;
 use App\Http\Resources\Product as ProductResource;
+use App\Jobs\IncProductViewCount;
+use App\Models\Product;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Jobs\IncProductViewCountJob;
 use Illuminate\Support\Facades\Redis;
 
-class ProductsController extends Controller {
+class ProductsController extends Controller
+{
+    public function index()
+    {
 
-    private const REDIS_KEY = 'products_view_count';
-
-    public function index() {
-        
         $products = Product::active()->paginate();
 
-        foreach($products as $product) {
+        foreach ($products as $product) {
 
             $product->category = $product->category;
 
@@ -27,73 +27,46 @@ class ProductsController extends Controller {
         return ProductResource::collection($products);
     }
 
-    public function show($id) {
-
-        $product = Product::active()->findOrFail($id);
-
+    public function show($id)
+    {
+        $product = Product::findOrFail($id);
         $product->category = $product->category;
-
         $product->discount = $product->discounts()->first();
-
-        dispatch(new IncProductViewCountJob('product:' . $id));
-
+        $this->dispatchNow(new IncProductViewCount($product->id));
         return new ProductResource($product);
     }
-
-    public function create(Request $request)
+    public function topProducts(Request $request)
     {
-        $data = $this->validateProduct($request);
-
-        $product = Product::create($data);
-
-        return $this->created('product created');
-    }
-
-    public function update(Request $request, $id)
-    {
-        $data = $this->validateProduct($request);
-
-        $product = Product::findOrFail($id);
-
-        $product->update($data);
-
-        return $this->ok('product updated');
-    }
-
-    public function delete($id)
-    {
-        $product = Product::findOrFail($id);
-
-        $product->delete();
-
-        Redis::ZREM(self::REDIS_KEY, 'product:' . $id);
-
-        return $this->ok('product deleted');
-    }
-
-    public function topProducts()
-    {
-        $data = [];
-
-        $result = Redis::ZREVRANGE(self::REDIS_KEY, 0, 4, 'WITHSCORES');
-
-        foreach($result as $key => $value)
-        {
-             $id = explode(':', $key)[1];
-
-             $product = Product::findOrFail($id);
-
-             $object = new \StdClass();
-            
-             $object->product = $product;
-
-             $object->category = $product->category;
-             
-             $object->view_count = $value;
-
-             array_push($data, $object);
+        $this->validateQueryForTopProducts($request);
+        $period = $request->query('period');
+        $filterBy = $request->query('filter_by');
+        $topProducts = [];
+        if ($filterBy === 'views') {
+            if ($period === 'day') {
+                $topProducts = Redis::ZREVRANGE(Carbon::now()->toDateString(), 0, 9, 'WITHSCORES');
+            } elseif ($period === 'month') {
+                $topProducts = Redis::ZREVRANGE(Carbon::now()->format('Y-m'), 0, 9, 'WITHSCORES');
+            } elseif ($period === 'year') {
+                $topProducts = Redis::ZREVRANGE(Carbon::now()->format('Y'), 0, 9, 'WITHSCORES');
+            }
+        } elseif ($filterBy === 'sales') {
+            //Todo
         }
-
-        return $this->ok($data);
+        $topProductsCollection = Product::findOrFail(collect($topProducts)->keys()->toArray());
+        foreach ($topProductsCollection as $product) {
+            $product->views = $topProducts[$product->id];
+        }
+        return ProductResource::collection($topProductsCollection);
     }
+    private function validateQueryForTopProducts(Request $request)
+    {
+        $this->validate($request, [
+            'filter_by' => 'required|in:views,sales',
+            'period' => 'required|in:day,month,year',
+        ], [
+            'filter_by.*' => 'فیلتر نامعتبر',
+            'period.*' => 'زمان نامعتبر',
+        ]);
+    }
+
 }
