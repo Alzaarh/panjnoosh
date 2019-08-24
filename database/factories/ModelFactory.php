@@ -8,6 +8,7 @@ $factory->define(App\Models\User::class, function (\Faker\Generator $faker) {
         'name' => Faker::firstname(),
         'username' => $faker->unique()->userName,
         'email' => $faker->unique()->safeEmail,
+        'profile_picture' => '/imgs/profile.png',
     ];
 });
 $factory->define(App\Models\Category::class, function (\Faker\Generator $faker) {
@@ -50,5 +51,17 @@ $factory->define(App\Models\Discount::class, function (\Faker\Generator $faker) 
     return [
         'product_id' => $faker->unique()->randomElement(App\Models\Product::pluck('id')),
         'off' => $faker->numberBetween(1, 100),
+    ];
+});
+$factory->define(App\Models\UserAddress::class, function (\Faker\Generator $faker) {
+    $states = ['تهران', 'خراسان رضوی', 'همدان', 'کرمان', 'مازندران'];
+    $cities = ['تهران', 'مشهد', 'همدان', 'ساری', 'ری'];
+    return [
+        'address' => 'لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک ',
+        'state' => rand(1, 10) > 50 ? $faker->randomElement($states) : null,
+        'city' => rand(1, 10) > 5 ? $faker->randomElement($cities) : null,
+        'zipcode' => $faker->postcode,
+        'phone' => $faker->e164PhoneNumber,
+        'user_id' => 1,
     ];
 });

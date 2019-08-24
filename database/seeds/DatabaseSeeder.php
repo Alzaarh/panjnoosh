@@ -12,6 +12,7 @@ class DatabaseSeeder extends Seeder
         'product_pictures',
         'admin_info',
         'discounts',
+        'user_addresses',
     ];
     public function run()
     {
@@ -20,7 +21,12 @@ class DatabaseSeeder extends Seeder
             DB::table($table)->truncate();
         }
         factory(App\Models\Category::class, 20)->create();
-        factory(App\Models\User::class, 200)->create();
+        factory(App\Models\User::class, 200)->create()
+            ->each(function ($user) {
+                $user->addresses()->save(factory(App\Models\UserAddress::class)->make([
+                    'user_id' => $user->id,
+                ]));
+            });
         factory(App\Models\Product::class, 50)->create()
             ->each(function ($product) {
                 if (rand(1, 100) > 80) {
@@ -30,12 +36,6 @@ class DatabaseSeeder extends Seeder
                 }
             });
         factory(App\Models\ProductPicture::class, 100)->create();
-        //admin_info table seeder
-        DB::table('admin_info')->insert([
-            'name' => 'محمد قاسمی',
-            'email' => 'mgh@gmail.com',
-            'phone' => '5134561245',
-            'social_networks' => json_encode('{"telegram": "panjnoosh.tel", "instagram": "panjnoosh.inst"}'),
-        ]);
+        factory(App\Models\UserAddress::class);
     }
 }

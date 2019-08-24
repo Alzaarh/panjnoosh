@@ -18,4 +18,8 @@ class User extends Model
     {
         $this->attributes['password'] = Hash::make($value);
     }
+    public function addresses()
+    {
+        return $this->hasMany(\App\Models\UserAddress::class);
+    }
 }

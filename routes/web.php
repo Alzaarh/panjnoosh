@@ -1,6 +1,6 @@
 <?php
 
-$router->group(['namespace' => 'Auth', 'prefix' => 'auth'], function () use ($router) {
+$router->group(['namespace' => 'Auth', 'prefix' => '/auth'], function () use ($router) {
     $router->post('/signup', 'AuthController@signup');
     $router->post('/signin', 'AuthController@signin');
 });
@@ -15,4 +15,8 @@ $router->group(['namespace' => 'Catalogue'], function () use ($router) {
         $router->get('/', 'ProductsController@index');
         $router->get('/{id}', ['as' => 'products.show', 'uses' => 'ProductsController@show']);
     });
+});
+$router->group(['namespace' => 'User', 'prefix' => '/users'], function () use ($router) {
+    $router->get('/me', 'UsersController@showUser');
+    $router->get('/me/addresses', 'UsersController@indexAddresses');
 });
