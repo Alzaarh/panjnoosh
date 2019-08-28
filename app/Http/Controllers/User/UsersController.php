@@ -60,6 +60,9 @@ class UsersController extends Controller
         return response()->json(['message' => 'user deleted'], 200);
     }
 
+    public function showSelf(Request $request) {
+        return new UserResource($request->user);
+    }
     public function indexAddresses(Request $request)
     {
         return UserAddressResource::collection($request->user->addresses);
