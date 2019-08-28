@@ -11,6 +11,10 @@ class UserAddress extends Resource
         return [
             'id' => $this->id,
 
+            'state' => $this->state,
+
+            'city' => $this->city,
+
             'address' => $this->address,
 
             'zipcode' => $this->zipcode,

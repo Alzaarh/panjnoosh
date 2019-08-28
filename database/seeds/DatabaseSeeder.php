@@ -46,5 +46,15 @@ class DatabaseSeeder extends Seeder
                 'product_id' => App\Models\Product::inRandomOrder()->first()->id,
             ]);
         }
+
+        $json = json_decode(file_get_contents(storage_path() . '/app/Province.json'), true);
+
+        foreach ($json as $state) {
+            DB::table('states')->insert(['title' => $state['name']]);
+
+            foreach ($state['Cities'] as $city) {
+                DB::table('cities')->insert(['title' => $city['name']]);
+            }
+        }
     }
 }

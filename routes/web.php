@@ -17,12 +17,38 @@ $router->group(['namespace' => 'Catalogue'], function () use ($router) {
     });
 });
 $router->group(['namespace' => 'User', 'prefix' => '/users'], function () use ($router) {
-    $router->get('/', 'UsersController@index');
-    $router->get('/me', 'UsersController@show');
-    $router->get('/me/addresses', 'UsersController@indexAddresses');
+    $router->group(['prefix' => '/addresses'], function () use ($router) {
+
+        $router->get('/', 'UserAddressesController@index');
+
+        $router->get('/{id}', 'UserAddressesController@show');
+
+        $router->post('/', 'UserAddressesController@create');
+
+        $router->patch('/{id}', 'UserAddressesController@update');
+
+        $router->delete('/{id}', 'UserAddressesController@delete');
+    });
+
     $router->group(['prefix' => '/purchases'], function () use ($router) {
         $router->get('/', 'PurchasesController@index');
         $router->get('/{id}', 'PurchasesController@show');
         $router->post('/', 'PurchasesController@create');
     });
+
+    $router->get('/', 'UsersController@index');
+
+    $router->get('/me', 'UsersController@showSelf');
+
+    $router->get('/{id}', 'UsersController@show');
+
+    $router->post('/', 'UsersController@create');
+
+    $router->patch('/{id}', 'UsersController@update');
+
+    $router->delete('/{id}', 'UsersController@delete');
 });
+
+$router->get('/states', 'ShopInfoController@getStates');
+
+$router->get('/cities', 'ShopInfoController@getCities');

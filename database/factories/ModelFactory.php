@@ -59,8 +59,24 @@ $factory->define(App\Models\ProductPicture::class, function (\Faker\Generator $f
 });
 
 $factory->define(App\Models\UserAddress::class, function (\Faker\Generator $faker) {
+    $states = [
+        'تهران',
+        'کرمان',
+        'خراسان رضوی',
+    ];
+
+    $cities = [
+        'مشهد',
+        'تهران',
+        'رفسنجان',
+    ];
+
     return [
         'address' => 'لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک ',
+
+        'state' => $faker->randomElement($states),
+
+        'city' => $faker->randomElement($cities),
 
         'zipcode' => $faker->postcode,
 
