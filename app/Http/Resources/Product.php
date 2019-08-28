@@ -11,16 +11,27 @@ class Product extends Resource
     {
         return [
             'id' => $this->id,
+
             'title' => $this->title,
+
             'shortDescription' => $this->short_description,
+
             'description' => $this->description,
-            'thumbnail' => $this->main_logo,
+
+            'thumbnail' => $this->logo,
+
             'price' => $this->price,
-            'discount' => empty($this->discount) ? 0 : new \App\Http\Resources\Discount($this->discount),
+
             'pictures' => \App\Http\Resources\ProductPicture::collection($this->pictures),
+
             'quantity' => $this->quantity,
+
+            'off' => $this->off,
+
             'category' => new CategoryResource($this->category),
+
             'active' => $this->active,
+
             'views' => $this->when($this->views, $this->views),
         ];
     }

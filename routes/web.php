@@ -17,6 +17,12 @@ $router->group(['namespace' => 'Catalogue'], function () use ($router) {
     });
 });
 $router->group(['namespace' => 'User', 'prefix' => '/users'], function () use ($router) {
-    $router->get('/me', 'UsersController@showUser');
+    $router->get('/', 'UsersController@index');
+    $router->get('/me', 'UsersController@show');
     $router->get('/me/addresses', 'UsersController@indexAddresses');
+    $router->group(['prefix' => '/purchases'], function () use ($router) {
+        $router->get('/', 'PurchasesController@index');
+        $router->get('/{id}', 'PurchasesController@show');
+        $router->post('/', 'PurchasesController@create');
+    });
 });

@@ -11,7 +11,8 @@
         "illuminate/redis": "^5.8",
         "illuminate/routing": "^5.8",
         "josh/faker": "^0.0.8",
-        "laravel/lumen-framework": "5.8.*"
+        "laravel/lumen-framework": "5.8.*",
+        "shetabit/payment": "^1.2"
     },
     "require-dev": {
         "fzaninotto/faker": "^1.4",

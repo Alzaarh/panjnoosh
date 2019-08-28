@@ -7,13 +7,18 @@ class DatabaseSeeder extends Seeder
 {
     private $tables = [
         'users',
+
         'categories',
+
         'products',
+
         'product_pictures',
+
         'admin_info',
-        'discounts',
+
         'user_addresses',
     ];
+
     public function run()
     {
         DB::statement('set foreign_key_checks = 0');
@@ -21,21 +26,25 @@ class DatabaseSeeder extends Seeder
             DB::table($table)->truncate();
         }
         factory(App\Models\Category::class, 20)->create();
+
         factory(App\Models\User::class, 200)->create()
             ->each(function ($user) {
                 $user->addresses()->save(factory(App\Models\UserAddress::class)->make([
                     'user_id' => $user->id,
                 ]));
             });
-        factory(App\Models\Product::class, 50)->create()
-            ->each(function ($product) {
-                if (rand(1, 100) > 80) {
-                    $product->discounts()->save(factory(App\Models\Discount::class)->make([
-                        'product_id' => $product->id,
-                    ]));
-                }
-            });
+
+        factory(App\Models\Product::class, 50)->create();
+
         factory(App\Models\ProductPicture::class, 100)->create();
-        factory(App\Models\UserAddress::class);
+
+        factory(App\Models\Purchase::class, 50)->create();
+        //product_purchase table
+        for ($i = 1; $i <= 100; $i++) {
+            DB::table('product_purchase')->insert([
+                'purchase_id' => rand(1, 50),
+                'product_id' => App\Models\Product::inRandomOrder()->first()->id,
+            ]);
+        }
     }
 }
