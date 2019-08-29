@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\UserAddress as UserAddressResource;
 use App\Http\Resources\User as UserResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Models\User;
+use Faker\Factory;
 
 class UsersController extends Controller
 {
@@ -63,6 +65,51 @@ class UsersController extends Controller
     public function showSelf(Request $request) {
         return new UserResource($request->user);
     }
+
+    public function updateSelf(Request $request) {
+        $this->validateUpdateSelf($request);
+
+        $user = $request->user;
+
+        $request->input('name') ? $user->name = $request->input('name') : '';
+        
+        if ($request->input('email')) {
+            $user->email = $request->input('email');
+        }
+        
+        $request->input('phone') ? $user->phone = $request->input('phone') : '';
+
+        $user->save();
+
+        return new UserResource($user);
+    }
+
+    public function updateProfilePicture(Request $request) {
+        $this->validateProfilePic($request);
+
+        $oldFile = $request->user->profile_picture;
+
+        $file = $request->file('profile');
+
+        $faker = Factory::create();
+
+        $fileName = $faker->randomNumber(5) . $request->user->id . '.' . $file->getClientOriginalExtension();
+
+        $path = '/storage/' . $fileName;
+
+        $request->user->profile_picture = $path;
+
+        $file->move(storage_path() . '/app', $fileName);
+
+        $request->user->save();
+
+        if ($oldFile) {
+            unlink(storage_path() . '/app/' . str_replace('/storage/', '', $oldFile));
+        }
+
+        return response()->json(['message' => 'profile picture updated'], 200);
+    }
+
     public function indexAddresses(Request $request)
     {
         return UserAddressResource::collection($request->user->addresses);
@@ -122,6 +169,28 @@ class UsersController extends Controller
             'role' => 'string|in:user,admin'
         ], [
             'role.*' => 'نامعتبر'
+        ]);
+    }
+
+    private function validateUpdateSelf($request) {
+        $this->validate($request, [
+            'name' => 'string|min:3|max:255',
+
+            'email' => 'string|email|max:255|unique:users,email,' . $request->user->id,
+
+            'phone' => 'string|numeric'
+        ], [
+            'name.*' => 'نام نامعتبر',
+
+            'email.*' => 'ایمیل نامعتبر',
+
+            'phone.*' => 'تلفن نامعتبر'
+        ]);
+    }
+
+    private function validateProfilePic($request) {
+        $this->validate($request, [
+            'profile' => 'required|image|max:1024'
         ]);
     }
 }

@@ -19,6 +19,8 @@ class CreateUsersTable extends Migration {
 
             $table->enum('role', ['user', 'admin'])->default('user');
 
+            $table->string('phone')->nullable();
+
             $table->string('profile_picture')->nullable();
 
             $table->timestamps();
@@ -26,8 +28,8 @@ class CreateUsersTable extends Migration {
             $table->softDeletes();
         });
     }
-    public function down()
-    {
+
+    public function down() {
         Schema::dropIfExists('users');
     }
 }

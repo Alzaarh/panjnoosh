@@ -5,10 +5,14 @@ use Josh\Faker\Faker;
 $factory->define(App\Models\User::class, function (\Faker\Generator $faker) {
     return [
         'password' => '12345',
+
         'name' => Faker::firstname(),
+
         'username' => $faker->unique()->userName,
+
         'email' => $faker->unique()->safeEmail,
-        'profile_picture' => '/imgs/profile.png',
+
+        'phone' => $faker->e164PhoneNumber
     ];
 });
 $factory->define(App\Models\Category::class, function (\Faker\Generator $faker) {

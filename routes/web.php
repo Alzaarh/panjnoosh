@@ -36,9 +36,13 @@ $router->group(['namespace' => 'User', 'prefix' => '/users'], function () use ($
         $router->post('/', 'PurchasesController@create');
     });
 
-    $router->get('/', 'UsersController@index');
-
     $router->get('/me', 'UsersController@showSelf');
+
+    $router->patch('/me', 'UsersController@updateSelf');
+
+    $router->post('/me/profile', 'UsersController@updateProfilePicture');
+
+    $router->get('/', 'UsersController@index');
 
     $router->get('/{id}', 'UsersController@show');
 
