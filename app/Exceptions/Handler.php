@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Validation\ValidationException;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -54,6 +55,10 @@ class Handler extends ExceptionHandler
         }
         if ($exception instanceof AuthorizationException) {
             return response()->json(['errors' => 'دسترسی غیرمجاز'], 401);
+        }
+
+        if ($exception instanceof QueryException) {
+            return response()->json(['message' => 'bad query'], 400);
         }
         return parent::render($request, $exception);
     }

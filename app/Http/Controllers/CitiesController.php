@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\CityImport;
 use App\Http\Resources\City as CityResource;
 use App\Models\City;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CitiesController extends Controller {
 
@@ -27,12 +29,44 @@ class CitiesController extends Controller {
     }
 
     public function create(Request $request) {
-        
+        $this->validateCreate($request);
+
+        if ($request->input('title') && $request->input('stateId')) {
+            $city = City::create([
+                'title' => $request->input('title'),
+
+                'state_id' => $request->input('stateId')
+            ]);
+
+            return (new CityResource($city))->response(201);
+        }
+
+        if ($request->file('cities')) {
+            Excel::import(new CityImport, $request->file('cities'));
+
+            return response()->json(['message' => 'cities created'], 201);
+        }
+
+        return response()->json(['message' => 'file upload error'], 400);
     }
 
     private function validateSearchTerm($request) {
         $this->validate($request, [
             'search' => 'required|string|max:30'
+        ]);
+    }
+
+    private function validateCreate($request) {
+        $this->validate($request, [
+            'title' => 'required_without:cities|string|max:255',
+
+            'stateId' => 'required_without:cities|numeric|exists:states,id',
+
+            'cities' => ['file', 'max:5000', function ($attribute, $value, $fail) {
+                if ($value->getClientOriginalExtension() !== 'xlsx') {
+                    $fail($attribute . 'is invalid');
+                }
+            }]
         ]);
     }
 }
