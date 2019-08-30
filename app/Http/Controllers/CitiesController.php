@@ -17,7 +17,7 @@ class CitiesController extends Controller {
     }
 
     public function index(Request $request) {
-        return CityResource::collection(City::where('title', 'like', '%' . $request->query('search') . '%'));
+        return CityResource::collection(City::where('title', 'like', '%' . $request->query('search') . '%')->get());
     }
 
     public function show($id) {
