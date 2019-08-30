@@ -87,6 +87,8 @@ $factory->define(App\Models\UserAddress::class, function (\Faker\Generator $fake
         'phone' => $faker->e164PhoneNumber,
 
         'user_id' => 1,
+
+        'receiver_name' => Faker::firstname()
     ];
 });
 
@@ -97,5 +99,19 @@ $factory->define(App\Models\Purchase::class, function (\Faker\Generator $faker) 
         'user_id' => $user->id,
         'user_address_id' => $user->addresses()->first()->id,
         'total_price' => $faker->randomNumber(5),
+    ];
+});
+
+$factory->define(App\Models\State::class, function () {
+    return [
+        'title' => Faker::firstname()
+    ];
+});
+
+$factory->define(App\Models\City::class, function (\Faker\Generator $faker) {
+    return [
+        'title' => Faker::firstname(),
+
+        'state_id' => $faker->randomElement(App\Models\State::all())
     ];
 });

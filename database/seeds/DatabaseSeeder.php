@@ -47,14 +47,8 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        $json = json_decode(file_get_contents(storage_path() . '/app/Province.json'), true);
+        factory(App\Models\State::class, 30)->create();
 
-        foreach ($json as $state) {
-            DB::table('states')->insert(['title' => $state['name']]);
-
-            foreach ($state['Cities'] as $city) {
-                DB::table('cities')->insert(['title' => $city['name']]);
-            }
-        }
+        factory(App\Models\City::class, 200)->create();
     }
 }

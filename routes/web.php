@@ -53,6 +53,26 @@ $router->group(['namespace' => 'User', 'prefix' => '/users'], function () use ($
     $router->delete('/{id}', 'UsersController@delete');
 });
 
-$router->get('/states', 'ShopInfoController@getStates');
+$router->group(['prefix' => '/states'], function () use ($router) {
+    $router->get('/', 'StatesController@index');
 
-$router->get('/cities', 'ShopInfoController@getCities');
+    $router->get('/{id}', 'StatesController@show');
+
+    $router->post('/', 'StatesController@create');
+
+    $router->patch('/{id}', 'StatesController@update');
+
+    $router->delete('/{id}', 'StatesController@delete');
+});
+
+$router->group(['prefix' => '/cities'], function () use ($router) {
+    $router->get('/', 'CitiesController@index');
+
+    $router->get('/{id}', 'CitiesController@show');
+
+    $router->post('/', 'CitiesController@create');
+
+    $router->patch('/{id}', 'CitiesController@update');
+
+    $router->delete('/{id}', 'CitiesController@delete');
+});
