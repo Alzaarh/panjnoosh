@@ -15,6 +15,7 @@ class UserAddress extends Model {
         'address',
         'zipcode',
         'phone',
+        'receiver_name',
         'default',
         'user_id',
     ];

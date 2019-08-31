@@ -65,6 +65,8 @@ class UserAddressesController extends Controller
 
             'phone' => 'required|string|numeric',
 
+            'receiver_name' => 'required|string|max:255',
+
             'default' => 'boolean'
         ], [
             'state.*' => 'استان نامعتبر',

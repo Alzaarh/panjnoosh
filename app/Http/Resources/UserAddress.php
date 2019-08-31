@@ -21,6 +21,8 @@ class UserAddress extends Resource
 
             'phone' => $this->phone,
 
+            'receiverName' => $this->receiver_name,
+
             'default' => $this->default,
 
             'createdAt' => $this->created_at,
