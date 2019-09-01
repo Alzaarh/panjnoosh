@@ -7,9 +7,18 @@ $router->group(['namespace' => 'Auth', 'prefix' => '/auth'], function () use ($r
 $router->group(['namespace' => 'Catalogue'], function () use ($router) {
     $router->group(['prefix' => '/categories'], function () use ($router) {
         $router->get('/', 'CategoriesController@index');
+
         $router->get('/{id}', 'CategoriesController@show');
+
         $router->get('/{id}/products', 'CategoriesController@indexProducts');
+
+        $router->post('/', 'CategoriesController@create');
+
+        $router->patch('/{id}', 'CategoriesController@update');
+
+        $router->delete('/{id}', 'CategoriesController@delete');
     });
+    
     $router->group(['prefix' => '/products'], function () use ($router) {
         $router->get('/top', 'ProductsController@topProducts');
         $router->get('/', 'ProductsController@index');

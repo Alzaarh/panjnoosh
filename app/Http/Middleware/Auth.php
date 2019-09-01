@@ -9,10 +9,9 @@ use Firebase\JWT\JWT;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 
-class Auth
-{
-    public function handle(Request $request, Closure $next)
-    {
+class Auth {
+
+    public function handle(Request $request, Closure $next) {
         $token = $request->header('Authorization');
         $token = str_replace('Bearer ', '', $token);
         if (!$token) {

@@ -3,15 +3,18 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Category extends Model
-{
+class Category extends Model {
+
+    use SoftDeletes;
+    
     protected $fillable = [
         'title',
         'details',
     ];
-    public function products()
-    {
+
+    public function products() {
         return $this->hasMany(\App\Models\Product::class);
     }
 }
