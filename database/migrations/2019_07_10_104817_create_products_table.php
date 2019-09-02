@@ -15,7 +15,7 @@ class CreateProductsTable extends Migration
 
             $table->string('short_description')->nullable();
 
-            $table->text('description')->nullable();
+            $table->mediumText('description')->nullable();
 
             $table->string('logo')->nullable();
 

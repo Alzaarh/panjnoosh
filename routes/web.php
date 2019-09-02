@@ -23,6 +23,12 @@ $router->group(['namespace' => 'Catalogue'], function () use ($router) {
         $router->get('/top', 'ProductsController@topProducts');
         $router->get('/', 'ProductsController@index');
         $router->get('/{id}', ['as' => 'products.show', 'uses' => 'ProductsController@show']);
+
+        $router->post('/', 'ProductsController@create');
+
+        $router->post('/{id}', 'ProductsController@update');
+
+        $router->delete('/{id}', 'ProductsController@delete');
     });
 });
 $router->group(['namespace' => 'User', 'prefix' => '/users'], function () use ($router) {

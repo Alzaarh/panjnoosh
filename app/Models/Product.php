@@ -5,9 +5,23 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
+    use SoftDeletes;
+    
+    protected $fillable = [
+        'title',
+        'short_description',
+        'description',
+        'price',
+        'quantity',
+        'active',
+        'off',
+        'category_id'
+    ];
+
     public $casts = [
         'active' => 'boolean',
     ];
