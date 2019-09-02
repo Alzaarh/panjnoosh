@@ -10,6 +10,7 @@ use App\Models\ProductPicture;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
+use Melihovv\Base64ImageDecoder\Base64ImageDecoder;
 
 class ProductsController extends Controller
 {
@@ -90,23 +91,26 @@ class ProductsController extends Controller
         
         $product = Product::create($input);
 
-        if ($request->hasFile('logo') && $request->file('logo')->isValid()) {
-            $path = storage_path() . '/app/';
+        if ($request->input('logo')) {
+            $decoder = new Base64ImageDecoder($request->input('logo'),
+                $allowedFormats = ['jpeg', 'png', 'jpg']);
 
-            $name = rand(10000, 99999) . $product->id . '.' . $request->file('logo')->getClientOriginalExtension();
+            
+            $name = time() . 'logo-' . $product->id . '.' . $decoder->getFormat();
 
-            $request->file('logo')->move($path, $name);
+            file_put_contents(storage_path() . '/app/' . $name, $decoder->getDecodedContent());
 
             $product->logo = 'storage/' . $name;
         }
 
-        if ($request->hasFile('pictures')) {
-            foreach ($request->file('pictures') as $picture) {
-                $path = storage_path() . '/app/';
+        if ($request->input('pictures')) {
+            foreach ($request->input('pictures') as $picture) {
+                $decoder = new Base64ImageDecoder($picture,
+                    $allowedFormats = ['jpeg', 'png', 'jpg']);
 
-                $name = rand(10000, 99999) . Date('Y-m-d') . $product->id . '.' . $picture->getClientOriginalExtension();
+                $name = time() . 'picture-' . $product->id . '.' . $decoder->getFormat();
 
-                $picture->move($path, $name);
+                file_put_contents(storage_path() . '/app/' . $name, $decoder->getDecodedContent());
 
                 ProductPicture::create(['product_id' => $product->id, 'path' => 'storage/' . $name]);
             }
@@ -209,7 +213,7 @@ class ProductsController extends Controller
 
             'description' => 'string',
 
-            'logo' => 'file|image|max:1024',
+            'logo' => 'string',
 
             'price' => 'numeric',
 
@@ -221,8 +225,9 @@ class ProductsController extends Controller
 
             'category_id' => 'numeric|exists:categories,id',
 
-            'pictures.*' => 'file|image|max:1024'
+            'pictures' => 'array',
 
+            'pictures.*' => 'string'
         ]);
     }
     private function validateQueryForTopProducts(Request $request)

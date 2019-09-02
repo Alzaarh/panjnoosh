@@ -26,7 +26,7 @@ $router->group(['namespace' => 'Catalogue'], function () use ($router) {
 
         $router->post('/', 'ProductsController@create');
 
-        $router->post('/{id}', 'ProductsController@update');
+        $router->patch('/{id}', 'ProductsController@update');
 
         $router->delete('/{id}', 'ProductsController@delete');
     });
