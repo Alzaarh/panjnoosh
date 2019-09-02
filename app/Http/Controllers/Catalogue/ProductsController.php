@@ -90,30 +90,13 @@ class ProductsController extends Controller
         $input = $this->validateProduct($request);
         
         $product = Product::create($input);
-
+        
         if ($request->input('logo')) {
-            $decoder = new Base64ImageDecoder($request->input('logo'),
-                $allowedFormats = ['jpeg', 'png', 'jpg']);
-
-            
-            $name = time() . 'logo-' . $product->id . '.' . $decoder->getFormat();
-
-            file_put_contents(storage_path() . '/app/' . $name, $decoder->getDecodedContent());
-
-            $product->logo = 'storage/' . $name;
+            $this->uploadLogo($request->input('logo'), $product);
         }
 
         if ($request->input('pictures')) {
-            foreach ($request->input('pictures') as $picture) {
-                $decoder = new Base64ImageDecoder($picture,
-                    $allowedFormats = ['jpeg', 'png', 'jpg']);
-
-                $name = time() . 'picture-' . $product->id . '.' . $decoder->getFormat();
-
-                file_put_contents(storage_path() . '/app/' . $name, $decoder->getDecodedContent());
-
-                ProductPicture::create(['product_id' => $product->id, 'path' => 'storage/' . $name]);
-            }
+            $this->uploadPictures($request->input('pictures'), $product);
         }
 
         $product->save();
@@ -126,54 +109,18 @@ class ProductsController extends Controller
         $input = $this->validateProduct($request);
 
         $product = Product::findOrFail($id);
-        
-        if ($request->input('title')) {
-            $product->title = $request->input('title');
-        }
 
-        if ($request->input('short_description')) {
-            $product->short_description = $request->input('short_description');
-        }
+        $product->update($input);
 
-        if ($request->input('description')) {
-            $product->description = $request->input('description');
-        }
-
-        if ($request->hasFile('logo')) {
+        if ($request->input('logo')) {
             if ($product->logo) {
-                $path = storage_path() . '/app/';
-
-                $name = rand(10000, 99999) . $product->id . '.' . $request->file('logo')->getClientOriginalExtension();
-
-                unlink($path . str_replace('storage/', '', $product->logo));
-
-                $request->file('logo')->move($path, $name);
-
-                $product->logo = 'storage/' . $name;
+                unlink(storage_path() . '/app/' . str_replace('storage/', '', $product->logo));
             }
+
+            $this->uploadLogo($request->input('logo'), $product);
         }
 
-        if ($request->input('price')) {
-            $product->price = $request->input('price');
-        }
-
-        if ($request->input('quantity')) {
-            $product->quantity = $request->input('quantity');
-        }
-
-        if ($request->input('active')) {
-            $product->active = $request->input('active');
-        }
-
-        if ($request->input('off')) {
-            $product->off = $request->input('off');
-        }
-
-        if ($request->input('category_id')) {
-            $product->category_id = $request->input('category_id');
-        }
-
-        if ($request->file('pictures')) {
+        if ($request->input('pictures')) {
             if ($product->pictures) {
                 foreach ($product->pictures as $picture) {
                     unlink(storage_path() . '/app/' . str_replace('storage/' , '', $picture->path));
@@ -181,13 +128,8 @@ class ProductsController extends Controller
                     $picture->delete();
                 }
             }
-            foreach ($request->file('pictures') as $picture) {
-                $name = rand(10000, 99999) . Date('Y-m-d') . $product->id . '.' . $picture->getClientOriginalExtension();
 
-                $picture->move(storage_path() . '/app/', $name);
-
-                ProductPicture::create(['product_id' => $product->id, 'path' => 'storage/' . $name]);
-            } 
+            $this->uploadPictures($request->input('pictures'), $product);
         }
 
         $product->save();
@@ -230,6 +172,7 @@ class ProductsController extends Controller
             'pictures.*' => 'string'
         ]);
     }
+
     private function validateQueryForTopProducts(Request $request)
     {
         $this->validate($request, [
@@ -241,4 +184,30 @@ class ProductsController extends Controller
         ]);
     }
 
+    private function uploadLogo($logo, $product)
+    {
+        $decoder = new Base64ImageDecoder($logo,
+            $allowedFormats = ['jpeg', 'png', 'jpg']);
+
+    
+        $name = time() . 'logo-' . $product->id . '.' . $decoder->getFormat();
+
+        file_put_contents(storage_path() . '/app/' . $name, $decoder->getDecodedContent());
+
+        $product->logo = 'storage/' . $name;   
+    }
+
+    private function uploadPictures($pictures, $product)
+    {
+        foreach ($pictures as $picture) {
+            $decoder = new Base64ImageDecoder($picture,
+                $allowedFormats = ['jpeg', 'png', 'jpg']);
+
+            $name = time() . 'picture-' . $product->id . '.' . $decoder->getFormat();
+
+            file_put_contents(storage_path() . '/app/' . $name, $decoder->getDecodedContent());
+
+            ProductPicture::create(['product_id' => $product->id, 'path' => 'storage/' . $name]);
+        }
+    }
 }
