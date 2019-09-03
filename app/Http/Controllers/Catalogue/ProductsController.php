@@ -200,18 +200,14 @@ class ProductsController extends Controller
     private function uploadPictures($pictures, $product)
     {
         foreach ($pictures as $picture) {
-            $count = 0;
-
             $decoder = new Base64ImageDecoder($picture,
                 $allowedFormats = ['jpeg', 'png', 'jpg']);
 
-            $name = time() . 'picture-' . $product->id . $count .  '.' . $decoder->getFormat();
+            $name = time() . rand(10000, 99999) . 'picture-' . $product->id .  '.' . $decoder->getFormat();
 
             file_put_contents(storage_path() . '/app/' . $name, $decoder->getDecodedContent());
 
             ProductPicture::create(['product_id' => $product->id, 'path' => 'storage/' . $name]);
-
-            $count++;
         }
     }
 }
