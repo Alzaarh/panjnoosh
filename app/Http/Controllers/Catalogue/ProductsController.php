@@ -163,7 +163,7 @@ class ProductsController extends Controller
 
             'active' => 'boolean',
 
-            'off' => 'numeric|min:1|max:100',
+            'off' => 'numeric|min:0|max:100',
 
             'category_id' => 'numeric|exists:categories,id',
 
