@@ -1,43 +1,68 @@
 <?php
 
-use Josh\Faker\Faker;
+$factory->define(App\Models\User::class,
+    function (Faker\Generator $faker, $names) {
+        return [
+            'password' => '12345',
 
-$faker = \Faker\Factory::create('fa_IR');
+            'name' => $faker->randomElement($names),
 
-$factory->define(App\Models\User::class, function (\Faker\Generator $faker) {
-    return [
-        'password' => '12345',
+            'username' => $faker->unique()->word,
 
-        'name' => Faker::firstname(),
+            'email' => $faker->unique()->safeEmail,
 
-        'username' => $faker->unique()->userName,
+            'phone' => '0915' . $faker->randomNumber(7),
 
-        'email' => $faker->unique()->safeEmail,
+            'role' => rand(1, 100) > 90 ? 'admin' : 'user',
+        ];
+    });
 
-        'phone' => $faker->e164PhoneNumber,
+$factory->define(App\Models\Category::class, function (Faker\Generator $faker) {
+    $categoryNames = [
+        'دمنوش',
+        'چای',
+        'قهوه',
+        'شیر',
+        'آب',
     ];
-});
-$factory->define(App\Models\Category::class, function (\Faker\Generator $faker) {
-    $categoryNames = [];
-    for ($i = 1; $i <= 100; $i++) {
-        array_push($categoryNames, ' دسته‌بندی' . $i);
-    }
+
+    $categoryDetails = [
+        'زندگی مانند یک آینه است
+        هنگامی که در آن لبخند بزنیم بهترین نتایج را به دست خواهیم آورد',
+
+        'بیست سال بعد بیشتر به خاطر کارهای نکرده ناراحت می شوید
+        تا کارهایی که انجام داده اید',
+
+        'هرگز خودتان را با هیچ کس دیگر در این جهان مقایسه نکنید
+        اگر این کار را بکنید به خودتان توهین کرده اید',
+    ];
+
     return [
         'title' => $faker->randomElement($categoryNames),
-        'details' => 'لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است.',
+
+        'details' => $faker->randomElement($categoryDetails),
     ];
 });
-$factory->define(App\Models\Product::class, function (\Faker\Generator $faker) {
-    $shortPersionLorem = 'لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان';
 
-    $logos = ['product-1.jpg', 'product-2.jpg', 'product-3.jpg'];
+$factory->define(App\Models\Product::class, function (Faker\Generator $faker) {
+    $logos = [
+        'product-1.jpg',
+        'product-2.jpg',
+        'product-3.jpg',
+    ];
+
+    $productNames = [
+        'چای گرم',
+        'چای سرد',
+        'قهوه سرد',
+        'قهوه گرم',
+        'شیر توت فرنگی‌',
+    ];
 
     return [
-        'title' => Faker::firstname(),
+        'title' => $faker->randomElement($productNames),
 
-        'short_description' => (rand(1, 10) % 2) == 0 ? $shortPersionLorem : null,
-
-        'price' => $faker->randomFloat(3, 0, 1000000),
+        'price' => $faker->randomNumber(4),
 
         'quantity' => $faker->randomNumber(2),
 
@@ -45,87 +70,125 @@ $factory->define(App\Models\Product::class, function (\Faker\Generator $faker) {
 
         'off' => rand(1, 100) > 80 ? rand(1, 100) : 0,
 
-        'category_id' => $faker->randomElement(\App\Models\Category::pluck('id')),
+        'category_id' => $faker->randomElement(
+            App\Models\Category::pluck('id')),
 
         'active' => rand(1, 100) > 90 ? false : true,
     ];
 });
-$factory->define(App\Models\ProductPicture::class, function (\Faker\Generator $faker) {
-    $productPictures = [
-        '/imgs/pp-1.jpg',
-        '/imgs/pp-2.jpg',
-        '/imgs/pp-3.jpg',
-        '/imgs/pp-4.jpg',
-        '/imgs/pp.jpg',
-    ];
-    return [
-        'product_id' => $faker->randomElement(\App\Models\Product::pluck('id')),
-        'path' => $faker->randomElement($productPictures),
-    ];
-});
 
-$factory->define(App\Models\UserAddress::class, function (\Faker\Generator $faker) {
-    $states = [
+$factory->define(App\Models\ProductPicture::class,
+    function (Faker\Generator $faker) {
+        $productPictures = [
+            '/imgs/pp-1.jpg',
+            '/imgs/pp-2.jpg',
+            '/imgs/pp-3.jpg',
+            '/imgs/pp-4.jpg',
+            '/imgs/pp-5.jpg',
+        ];
+
+        return [
+            'product_id' => $faker->randomElement(
+                \App\Models\Product::pluck('id')),
+
+            'path' => $faker->randomElement($productPictures),
+        ];
+    });
+
+$factory->define(App\Models\UserAddress::class,
+    function (Faker\Generator $faker) {
+        $cities = [
+            'تهران',
+            'کرمان',
+            'رفسنجان',
+        ];
+
+        $states = [
+            'کرمان',
+            'تهران',
+        ];
+
+        $names = [
+            'ناهید',
+            'علی',
+            'نازنین',
+        ];
+
+        return [
+            'address' => 'آدرس به این صورت',
+            'state' => $faker->randomElement($states),
+            'city' => $faker->randomElement($cities),
+            'zipcode' => '1234567890',
+            'phone' => '0915' . $faker->randomNumber(7),
+            'user_id' => $faker->randomElement(App\Models\User::pluck('id')),
+            'receiver_name' => $faker->randomElement($names),
+        ];
+    });
+
+$factory->define(App\Models\Order::class, function (Faker\Generator $faker) {
+    $cities = [
         'تهران',
         'کرمان',
-        'خراسان رضوی',
-    ];
-
-    $cities = [
-        'مشهد',
-        'تهران',
         'رفسنجان',
     ];
 
-    return [
-        'address' => 'لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک ',
-
-        'state' => $faker->randomElement($states),
-
-        'city' => $faker->randomElement($cities),
-
-        'zipcode' => $faker->postcode,
-
-        'phone' => $faker->e164PhoneNumber,
-
-        'user_id' => 1,
-
-        'receiver_name' => Faker::firstname(),
+    $states = [
+        'کرمان',
+        'تهران',
     ];
-});
 
-$factory->define(App\Models\Order::class, function ($faker) {
+    $names = [
+        'ناهید',
+        'علی',
+        'نازنین',
+    ];
+
     return [
         'total_price' => $faker->randomNumber(4),
-
         'user_id' => $faker->randomElement(App\Models\User::pluck('id')),
-
-        'user_city' => $faker->city,
-
-        'user_state' => $faker->state,
-
-        'user_address' => $faker->address,
-
-        'user_zipcode' => $faker->postcode,
-
-        'user_phone' => $faker->phoneNumber,
-
-        'user_receiver_name' => $faker->name,
-
-        'status' => $faker->randomElement(App\Models\Order::STATUS)
+        'user_city' => $faker->randomElement($cities),
+        'user_state' => $faker->randomElement($states),
+        'user_address' => 'آدرس به این صورت',
+        'user_zipcode' => '1234567890',
+        'user_phone' => '0915' . $faker->randomNumber(7),
+        'user_receiver_name' => $faker->randomElement($names),
+        'status' => $faker->randomElement(App\Models\Order::STATUS),
     ];
 });
 
-$factory->define(App\Models\State::class, function () {
+$factory->define(App\Models\State::class, function (Faker\Generator $faker) {
+    $states = [
+        'کرمان',
+        'تهران',
+        'خراسان رضوی',
+        'مازندران',
+        'همدان',
+        'یزد',
+    ];
+
     return [
-        'title' => Faker::firstname(),
+        'title' => $faker->randomElement($states),
     ];
 });
 
-$factory->define(App\Models\City::class, function (\Faker\Generator $faker) {
-    return [
-        'title' => Faker::firstname(),
+$factory->define(App\Models\City::class, function (Faker\Generator $faker) {
+    $cities = [
+        'مشهد',
+        'تهران',
+        'اصفهان',
+        'شیراز',
+        'کرمان',
+        'یزد',
+        'همدان',
+        'بندرعباس',
+        'رفسنجان',
+        'رشت',
+        'ساری',
+        'بجنورد',
+    ];
 
+    return [
+        'title' => $faker->randomElement($cities),
         'state_id' => $faker->randomElement(App\Models\State::all()),
     ];
 });

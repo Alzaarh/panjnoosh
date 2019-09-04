@@ -18,7 +18,7 @@ $router->group(['namespace' => 'Catalogue'], function () use ($router) {
 
         $router->delete('/{id}', 'CategoriesController@delete');
     });
-    
+
     $router->group(['prefix' => '/products'], function () use ($router) {
         $router->get('/top', 'ProductsController@topProducts');
         $router->get('/', 'ProductsController@index');
@@ -43,12 +43,6 @@ $router->group(['namespace' => 'User', 'prefix' => '/users'], function () use ($
         $router->patch('/{id}', 'UserAddressesController@update');
 
         $router->delete('/{id}', 'UserAddressesController@delete');
-    });
-
-    $router->group(['prefix' => '/purchases'], function () use ($router) {
-        $router->get('/', 'PurchasesController@index');
-        $router->get('/{id}', 'PurchasesController@show');
-        $router->post('/', 'PurchasesController@create');
     });
 
     $router->get('/me', 'UsersController@showSelf');
@@ -90,4 +84,8 @@ $router->group(['prefix' => '/cities'], function () use ($router) {
     $router->patch('/{id}', 'CitiesController@update');
 
     $router->delete('/{id}', 'CitiesController@delete');
+});
+
+$router->group(['prefix' => '/orders', 'namespace' => 'User'], function () use ($router) {
+    $router->get('/', 'OrdersController@index');
 });

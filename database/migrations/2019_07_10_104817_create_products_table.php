@@ -19,7 +19,7 @@ class CreateProductsTable extends Migration
 
             $table->string('logo')->nullable();
 
-            $table->float('price', 10, 3)->nullable();
+            $table->integer('price')->unsigned()->nullable();
 
             $table->unsignedInteger('quantity');
 

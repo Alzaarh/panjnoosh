@@ -13,6 +13,11 @@ class Order extends Model
         'delivered' => '3',
     ];
 
+    public function scopeUser($query, $userId)
+    {
+        return $query->where('user_id', $userId);
+    }
+
     public function products()
     {
         return $this->belongsToMany(\App\Models\Product::class);

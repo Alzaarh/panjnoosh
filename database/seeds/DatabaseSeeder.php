@@ -5,20 +5,50 @@ use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
+    private $cities = [
+        'مشهد',
+        'رفسنجان',
+        'تهران',
+        'کرمان',
+        'اردبیل',
+        'ری',
+        'یزد',
+        'همدان',
+    ];
+
+    private $states = [
+        'خراسان رضوی',
+        'خراسان شمالی',
+        'یزد',
+        'کرمان',
+        'تهران',
+        'گیلان',
+        'همدان',
+        'البرز',
+    ];
+
+    private $names = [
+        'رضا',
+        'محمد',
+        'احمد',
+        'نازنین',
+        'علی',
+        'امیر',
+        'کسری',
+        'سامان',
+        'ناهید',
+        'محمدرضا',
+        'محمدامین',
+    ];
+
     private $tables = [
         'users',
-
         'categories',
-
         'products',
-
         'product_pictures',
-
-        'admin_info',
-
         'user_addresses',
-
         'orders',
+        'order_product',
     ];
 
     public function run()
@@ -29,18 +59,15 @@ class DatabaseSeeder extends Seeder
             DB::table($table)->truncate();
         }
 
-        factory(App\Models\Category::class, 20)->create();
+        factory(App\Models\Category::class, 5)->create();
 
-        factory(App\Models\User::class, 200)->create()
-            ->each(function ($user) {
-                $user->addresses()->save(factory(App\Models\UserAddress::class)->make([
-                    'user_id' => $user->id,
-                ]));
-            });
+        factory(App\Models\User::class, 30)->create();
 
-        factory(App\Models\Product::class, 50)->create();
+        factory(App\Models\UserAddress::class, 15)->create();
 
-        factory(App\Models\ProductPicture::class, 100)->create();
+        factory(App\Models\Product::class, 10)->create();
+
+        factory(App\Models\ProductPicture::class, 20)->create();
 
         factory(App\Models\Order::class, 20)->create();
 
@@ -63,8 +90,8 @@ class DatabaseSeeder extends Seeder
 
         }
 
-        factory(App\Models\State::class, 30)->create();
+        factory(App\Models\State::class, 5)->create();
 
-        factory(App\Models\City::class, 200)->create();
+        factory(App\Models\City::class, 10)->create();
     }
 }
