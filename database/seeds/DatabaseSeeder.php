@@ -17,14 +17,18 @@ class DatabaseSeeder extends Seeder
         'admin_info',
 
         'user_addresses',
+
+        'orders',
     ];
 
     public function run()
     {
         DB::statement('set foreign_key_checks = 0');
+
         foreach ($this->tables as $table) {
             DB::table($table)->truncate();
         }
+
         factory(App\Models\Category::class, 20)->create();
 
         factory(App\Models\User::class, 200)->create()
@@ -38,13 +42,25 @@ class DatabaseSeeder extends Seeder
 
         factory(App\Models\ProductPicture::class, 100)->create();
 
-        factory(App\Models\Purchase::class, 50)->create();
-        //product_purchase table
-        for ($i = 1; $i <= 100; $i++) {
-            DB::table('product_purchase')->insert([
-                'purchase_id' => rand(1, 50),
-                'product_id' => App\Models\Product::inRandomOrder()->first()->id,
-            ]);
+        factory(App\Models\Order::class, 20)->create();
+
+        foreach (App\Models\Order::all() as $order) {
+            for ($i = 0; $i < 2; $i++) {
+                $product = App\Models\Product::inRandomOrder()->first();
+
+                DB::table('order_product')->insert([
+                    'product_id' => $product->id,
+
+                    'order_id' => $order->id,
+
+                    'product_title' => $product->title,
+
+                    'product_price' => $product->price,
+
+                    'quantity' => rand(1, 10),
+                ]);
+            }
+
         }
 
         factory(App\Models\State::class, 30)->create();

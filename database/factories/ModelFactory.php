@@ -2,6 +2,8 @@
 
 use Josh\Faker\Faker;
 
+$faker = \Faker\Factory::create('fa_IR');
+
 $factory->define(App\Models\User::class, function (\Faker\Generator $faker) {
     return [
         'password' => '12345',
@@ -12,7 +14,7 @@ $factory->define(App\Models\User::class, function (\Faker\Generator $faker) {
 
         'email' => $faker->unique()->safeEmail,
 
-        'phone' => $faker->e164PhoneNumber
+        'phone' => $faker->e164PhoneNumber,
     ];
 });
 $factory->define(App\Models\Category::class, function (\Faker\Generator $faker) {
@@ -88,23 +90,35 @@ $factory->define(App\Models\UserAddress::class, function (\Faker\Generator $fake
 
         'user_id' => 1,
 
-        'receiver_name' => Faker::firstname()
+        'receiver_name' => Faker::firstname(),
     ];
 });
 
-$factory->define(App\Models\Purchase::class, function (\Faker\Generator $faker) {
-    $user = App\Models\User::inRandomOrder()->first();
-    $products = App\Models\Product::inRandomOrder()->take(10)->get();
+$factory->define(App\Models\Order::class, function ($faker) {
     return [
-        'user_id' => $user->id,
-        'user_address_id' => $user->addresses()->first()->id,
-        'total_price' => $faker->randomNumber(5),
+        'total_price' => $faker->randomNumber(4),
+
+        'user_id' => $faker->randomElement(App\Models\User::pluck('id')),
+
+        'user_city' => $faker->city,
+
+        'user_state' => $faker->state,
+
+        'user_address' => $faker->address,
+
+        'user_zipcode' => $faker->postcode,
+
+        'user_phone' => $faker->phoneNumber,
+
+        'user_receiver_name' => $faker->name,
+
+        'status' => $faker->randomElement(App\Models\Order::STATUS)
     ];
 });
 
 $factory->define(App\Models\State::class, function () {
     return [
-        'title' => Faker::firstname()
+        'title' => Faker::firstname(),
     ];
 });
 
@@ -112,6 +126,6 @@ $factory->define(App\Models\City::class, function (\Faker\Generator $faker) {
     return [
         'title' => Faker::firstname(),
 
-        'state_id' => $faker->randomElement(App\Models\State::all())
+        'state_id' => $faker->randomElement(App\Models\State::all()),
     ];
 });
