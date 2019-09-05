@@ -32,4 +32,20 @@ class OrdersController extends Controller
 
         return OrderResource::collection($orders);
     }
+
+    public function show(Request $request, $id)
+    {
+        $order = Order::user($request->user->id)
+            ->findOrFail($id);
+
+        $data = [];
+
+        foreach ($order->products as $orderProduct) {
+            array_push($data, $orderProduct->pivot);
+        }
+
+        $order->orderProducts = $data;
+
+        return new OrderResource($order);
+    }
 }

@@ -86,6 +86,9 @@ $router->group(['prefix' => '/cities'], function () use ($router) {
     $router->delete('/{id}', 'CitiesController@delete');
 });
 
-$router->group(['prefix' => '/orders', 'namespace' => 'User'], function () use ($router) {
-    $router->get('/', 'OrdersController@index');
-});
+$router->group(['prefix' => '/orders', 'namespace' => 'User'],
+    function () use ($router) {
+        $router->get('/', 'OrdersController@index');
+
+        $router->get('/{id}', 'OrdersController@show');
+    });

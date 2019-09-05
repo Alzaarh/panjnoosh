@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Product extends Model
 {
     use SoftDeletes;
-    
+
     protected $fillable = [
         'title',
         'short_description',
@@ -19,7 +19,7 @@ class Product extends Model
         'quantity',
         'active',
         'off',
-        'category_id'
+        'category_id',
     ];
 
     public $casts = [
@@ -46,6 +46,13 @@ class Product extends Model
     {
         return $this->hasMany(\App\Models\ProductPicture::class);
     }
+
+    public function orders()
+    {
+        return $this->belongsToMany(\App\Models\Order::class)
+            ->withPivot('product_title', 'product_price', 'quantity');
+    }
+
     protected static function boot()
     {
         parent::boot();

@@ -29,7 +29,10 @@ class Order extends Resource
 
             'status' => $this->status,
 
-            'created_at' => $this->created_at
+            'created_at' => $this->created_at,
+
+            'products' => $this->when(
+                $this->orderProducts, $this->orderProducts),
         ];
     }
 }
