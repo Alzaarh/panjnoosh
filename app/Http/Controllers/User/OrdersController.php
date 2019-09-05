@@ -16,7 +16,19 @@ class OrdersController extends Controller
 
     public function index(Request $request)
     {
-        $orders = Order::user($request->user->id)->get();
+        $sortBy = $request->query('sortBy');
+        $asc = $request->query('asc');
+        $desc = $request->query('desc');
+
+        $query = Order::user($request->user->id);
+
+        if ($sortBy && ($asc || $desc) && $sortBy === 'total_price') {
+            $query = $query->orderBy('total_price', $asc ? 'asc' : 'desc');
+        } elseif ($sortBy && ($asc || $desc) && $sortBy === 'created_at') {
+            $query = $query->orderBy('created_at', $asc ? 'asc' : 'desc');
+        }
+
+        $orders = $query->paginate();
 
         return OrderResource::collection($orders);
     }
