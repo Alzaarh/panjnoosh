@@ -13,6 +13,10 @@ class Order extends Model
         'delivered' => '3',
     ];
 
+    protected $casts = [
+        'status' => 'string',
+    ];
+
     public function scopeUser($query, $userId)
     {
         return $query->where('user_id', $userId);
