@@ -29,6 +29,8 @@ class CreateOrdersTable extends Migration
 
             $table->enum('status', ['0', '1', '2', '3']);
 
+            $table->boolean('is_complete')->default(false);
+
             $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
 
             $table->timestamps();

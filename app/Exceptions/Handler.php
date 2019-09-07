@@ -57,9 +57,9 @@ class Handler extends ExceptionHandler
             return response()->json(['errors' => 'دسترسی غیرمجاز'], 401);
         }
 
-        if ($exception instanceof QueryException) {
-            return response()->json(['message' => 'bad query'], 400);
-        }
+        // if ($exception instanceof QueryException) {
+        //     return response()->json(['message' => 'bad query'], 400);
+        // }
         return parent::render($request, $exception);
     }
 }
