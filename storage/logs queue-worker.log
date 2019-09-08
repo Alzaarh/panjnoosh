@@ -374,3 +374,15 @@ PHP Notice:  date_default_timezone_set(): Timezone ID '+04:30' is invalid in /ho
 [2019-08-24 22:28:59][LqOyjdgywKkJS4HYCrlJyEp9Ht2zrAkF] Processed:  App\Jobs\IncProductViewCount
 [2019-08-24 22:30:17][OEKHIZEqm2t5U3OeG5jueIdcemuZd69U] Processing: App\Jobs\IncProductViewCount
 [2019-08-24 22:30:17][OEKHIZEqm2t5U3OeG5jueIdcemuZd69U] Processed:  App\Jobs\IncProductViewCount
+
+In AbstractConnection.php line 155:
+                                                                    
+  Error while reading line from the server. [tcp://127.0.0.1:6379]  
+                                                                    
+
+
+In AbstractConnection.php line 155:
+                                             
+  Connection refused [tcp://127.0.0.1:6379]  
+                                             
+

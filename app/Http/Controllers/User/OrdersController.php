@@ -58,15 +58,13 @@ class OrdersController extends Controller
     {
         $this->validateCreate($request);
 
-        $order = Order::createOrder($request);
-
-        $result = Zarinpal::startTransaction($order->total_price);
+        $result = Order::createOrder($request);
 
         if ($result) {
-            return response()->json(['message' => $result], 201);
+            return response()->json(['message' => $result['url']], 201);
         }
 
-        return response()->json(['message' => 'error'], 400);
+        return response()->json(['message' => 'error'], 500);
     }
 
     private function validateCreate($request)
@@ -79,13 +77,12 @@ class OrdersController extends Controller
                 }),
             ],
             'products' => 'required|array|min:1',
-            'products.*.id' => 'required|exists:products,id',
+            'products.*.id' => 'required|integer|exists:products,id',
             'products.*.quantity' => 'required|integer|min:1',
         ]);
 
-        foreach ($request->input('products') as $product) {
-            if ((Product::find($product['id']))->quantity <
-                $product['quantity']) {
+        foreach ($request->input('products') as $key) {
+            if ((Product::find($key['id']))->quantity < $key['quantity']) {
                 throw ValidationException::withMessages([
                     'products' => 'invalid',
                 ]);

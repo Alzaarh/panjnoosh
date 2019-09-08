@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Helpers\Zarinpal;
+use App\Models\Product;
+use App\Models\UserAddress;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
@@ -49,26 +52,31 @@ class Order extends Model
 
         $productData = [];
 
-        foreach ($request->input('products') as $product) {
-            $p = \App\Models\Product::find($product['id']);
+        foreach ($request->input('products') as $key) {
+            $product = Product::find($key['id']);
 
-            $price = $p->price * ($p->off > 0 ? $p->off : 100) / 100;
+            $price =
+            $product->price * ($product->off > 0 ? $product->off : 100) / 100;
 
             $data['total_price'] += $price;
 
             array_push($productData, [
                 'product_price' => $price,
-                'product_id' => $p->id,
-                'product_title' => $p->title,
-                'quantity' => $product['quantity'],
+                'product_id' => $product->id,
+                'product_title' => $product->title,
+                'quantity' => $key['quantity'],
             ]);
+        }
+
+        $result = Zarinpal::startTransaction($data['total_price']);
+
+        if (!$result) {
+            return false;
         }
 
         $data['user_id'] = $request->user->id;
 
-        $address = \App\Models\UserAddress::find(
-            $request->input('user_address_id')
-        );
+        $address = UserAddress::find($request->input('user_address_id'));
 
         $data['user_city'] = $address->city;
 
@@ -84,12 +92,17 @@ class Order extends Model
 
         $data['status'] = '0';
 
+        $data['transaction_code'] = $result['transaction_code'];
+
         $order = self::create($data);
 
         $order->products()->attach($productData);
 
         $order->orderProducts = $productData;
 
-        return $order;
+        return [
+            'order' => $order,
+            'url' => $result['url'],
+        ];
     }
 }
