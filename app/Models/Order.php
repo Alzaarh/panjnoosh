@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Helpers\Zarinpal;
 use App\Models\Product;
 use App\Models\UserAddress;
 use Illuminate\Database\Eloquent\Model;
@@ -20,6 +19,7 @@ class Order extends Model
         'user_phone',
         'user_receiver_name',
         'status',
+        'code',
     ];
 
     public const STATUS = [
@@ -47,62 +47,33 @@ class Order extends Model
     public static function createOrder(Request $request)
     {
         $data = [];
-
-        $data['total_price'] = 0;
-
         $productData = [];
 
         foreach ($request->input('products') as $key) {
             $product = Product::find($key['id']);
-
-            $price =
-            $product->price * ($product->off > 0 ? $product->off : 100) / 100;
-
-            $data['total_price'] += $price;
-
             array_push($productData, [
-                'product_price' => $price,
+                'product_price' => $product->price,
                 'product_id' => $product->id,
-                'product_title' => $product->title,
                 'quantity' => $key['quantity'],
             ]);
         }
-
-        $result = Zarinpal::startTransaction($data['total_price']);
-
-        if (!$result) {
-            return false;
-        }
-
         $data['user_id'] = $request->user->id;
-
         $address = UserAddress::find($request->input('user_address_id'));
-
         $data['user_city'] = $address->city;
-
         $data['user_state'] = $address->state;
-
         $data['user_address'] = $address->address;
-
         $data['user_zipcode'] = $address->zipcode;
-
         $data['user_phone'] = $address->phone;
-
         $data['user_receiver_name'] = $address->receiver_name;
-
         $data['status'] = '0';
-
-        $data['transaction_code'] = $result['transaction_code'];
-
+        $data['code'] = str_replace('.', '', microtime(true));
         $order = self::create($data);
-
         $order->products()->attach($productData);
-
         $order->orderProducts = $productData;
-
         return [
-            'order' => $order,
-            'url' => $result['url'],
+            'data' => [
+                'order' => $order,
+            ],
         ];
     }
 }

@@ -57,14 +57,8 @@ class OrdersController extends Controller
     public function create(Request $request)
     {
         $this->validateCreate($request);
-
         $result = Order::createOrder($request);
-
-        if ($result) {
-            return response()->json(['message' => $result['url']], 201);
-        }
-
-        return response()->json(['message' => 'error'], 500);
+        return response()->json($result, 201);
     }
 
     private function validateCreate($request)

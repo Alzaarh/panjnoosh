@@ -94,3 +94,11 @@ $router->group(['prefix' => 'orders', 'namespace' => 'User'],
 
         $router->post('', 'OrdersController@create');
     });
+
+$router->group(['prefix' => 'blogs'], function () use ($router) {
+    $router->get('', 'BlogsController@index');
+    $router->get('{id}', 'BlogsController@show');
+    $router->post('', 'BlogsController@create');
+    $router->patch('{id}', 'BlogsController@update');
+    $router->delete('{id}', 'BlogsController@delete');
+});
