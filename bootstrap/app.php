@@ -78,12 +78,10 @@ $app->routeMiddleware([
 */
 
 $app->register(Illuminate\Redis\RedisServiceProvider::class);
-
 $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
-
 $app->register(App\Providers\AppServiceProvider::class);
-
 $app->register(Maatwebsite\Excel\ExcelServiceProvider::class);
+$app->register(Shetabit\Payment\Provider\PaymentServiceProvider::class);
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 

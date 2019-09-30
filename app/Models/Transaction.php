@@ -13,10 +13,11 @@ class Transaction extends Model
     ];
 
     protected $fillable = [
-        'transaction_code',
+        'code',
         'user_id',
         'order_id',
         'is_verified',
+        'amount',
     ];
 
     public function user()

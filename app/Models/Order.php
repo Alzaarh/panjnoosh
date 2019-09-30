@@ -41,7 +41,7 @@ class Order extends Model
     public function products()
     {
         return $this->belongsToMany(\App\Models\Product::class)
-            ->withPivot('product_title', 'product_price', 'quantity');
+            ->withPivot('product_price', 'quantity');
     }
 
     public static function createOrder(Request $request)

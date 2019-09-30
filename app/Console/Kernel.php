@@ -8,7 +8,7 @@ use Laravel\Lumen\Console\Kernel as ConsoleKernel;
 class Kernel extends ConsoleKernel
 {
     protected $commands = [
-
+        \Laravelista\LumenVendorPublish\VendorPublishCommand::class,
     ];
     /**
      * Define the application's command schedule.

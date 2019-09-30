@@ -102,3 +102,9 @@ $router->group(['prefix' => 'blogs'], function () use ($router) {
     $router->patch('{id}', 'BlogsController@update');
     $router->delete('{id}', 'BlogsController@delete');
 });
+
+$router->group(['prefix' => 'transactions', 'namespace' => 'Money'],
+    function () use ($router) {
+        $router->post('', 'TransactionsController@create');
+        $router->get('verify', 'TransactionsController@verify');
+    });
