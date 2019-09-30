@@ -108,3 +108,9 @@ $router->group(['prefix' => 'transactions', 'namespace' => 'Money'],
         $router->post('', 'TransactionsController@create');
         $router->get('verify', 'TransactionsController@verify');
     });
+$router->group(['prefix' => 'admins', 'namespace' => 'Admin'],
+    function () use ($router) {
+        $router->get('orders', 'OrdersController@index');
+        $router->get('orders/{id}', 'OrdersController@show');
+        $router->patch('orders/{id}', 'OrdersController@update');
+    });
