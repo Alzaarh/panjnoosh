@@ -30,7 +30,7 @@ class OrdersController extends Controller
     public function show(Request $request, $id)
     {
         $transaction = Transaction::findOrFail($id);
-        return new TransactionResource($$transaction);
+        return new TransactionResource($transaction);
     }
 
     public function create(Request $request)
