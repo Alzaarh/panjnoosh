@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Request as Req;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
+use App\Models\Transaction;
+use App\Http\Resources\Transaction as TransactionResource;
 
 class OrdersController extends Controller
 {
@@ -21,21 +23,10 @@ class OrdersController extends Controller
 
     public function index(Request $request)
     {
-        $sortBy = $request->query('sortBy');
-        $asc = $request->query('asc');
-        $desc = $request->query('desc');
-
-        $query = Order::user($request->user->id);
-
-        if ($sortBy && ($asc || $desc) && $sortBy === 'total_price') {
-            $query = $query->orderBy('total_price', $asc ? 'asc' : 'desc');
-        } elseif ($sortBy && ($asc || $desc) && $sortBy === 'created_at') {
-            $query = $query->orderBy('created_at', $asc ? 'asc' : 'desc');
-        }
-
-        $orders = $query->paginate();
-
-        return OrderResource::collection($orders);
+        $transactions = Transaction::where('user_id', $request->user->id)
+            ->orderBy('created_at', 'desc')
+            ->paginate();
+        return TransactionResource::collection($transactions);
     }
 
     public function show(Request $request, $id)
