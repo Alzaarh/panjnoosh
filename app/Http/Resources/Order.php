@@ -34,7 +34,7 @@ class Order extends Resource
 
             'updated_at' => $this->updated_at,
 
-            'products' => Product::collection($this->products),
+            'products' => $this->products,
         ];
     }
 }
