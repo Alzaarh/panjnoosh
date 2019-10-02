@@ -22,6 +22,7 @@ class OrdersController extends Controller
     public function index(Request $request)
     {
         $transactions = Transaction::where('user_id', $request->user->id)
+            ->where('is_verified', false)
             ->orderBy('created_at', 'desc')
             ->paginate();
         return TransactionResource::collection($transactions);
@@ -29,7 +30,10 @@ class OrdersController extends Controller
 
     public function show(Request $request, $id)
     {
-        $transaction = Transaction::findOrFail($id);
+        $transaction = Transaction::where('user_id', $request->user->id)
+            ->where('id', $id)
+            ->where('is_verified', false)
+            ->orderBy('created_at', 'desc');
         return new TransactionResource($transaction);
     }
 
