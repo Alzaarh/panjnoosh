@@ -48,7 +48,7 @@ class Order extends Model
         foreach ($request->input('products') as $key) {
             $product = Product::find($key['id']);
             array_push($productData, [
-                'product_price' => $product->price,
+                'product_price' => ($product->price * (100 - $product->off)) / 100,
                 'product_id' => $product->id,
                 'quantity' => $key['quantity'],
             ]);
