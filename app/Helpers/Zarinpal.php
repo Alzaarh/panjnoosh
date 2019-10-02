@@ -102,7 +102,7 @@ class Zarinpal
             ], 400);
         } else {
             if ($result['Status'] == 100) {
-                foreach ($transaction->order()->products as $product) {
+                foreach ($transaction->order->products as $product) {
                     $product->quantity -= $product->pivot->quantity;
                     $product->save();
                 }
