@@ -33,7 +33,8 @@ class OrdersController extends Controller
         $transaction = Transaction::where('user_id', $request->user->id)
             ->where('id', $id)
             ->where('is_verified', true)
-            ->orderBy('created_at', 'desc');
+            ->orderBy('created_at', 'desc')
+            ->first();
         return new TransactionResource($transaction);
     }
 
