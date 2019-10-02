@@ -17,7 +17,7 @@ class Order extends Resource
 
             'user_city' => $this->user_city,
 
-            'user_state' => $this->state,
+            'user_state' => $this->user_state,
 
             'user_address' => $this->user_address,
 

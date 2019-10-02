@@ -3,16 +3,14 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Order as OrderResource;
+use App\Http\Resources\Transaction as TransactionResource;
 use App\Models\Order;
 use App\Models\Product;
-use App\Utils\Zarinpal;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Request as Req;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
-use App\Models\Transaction;
-use App\Http\Resources\Transaction as TransactionResource;
 
 class OrdersController extends Controller
 {
@@ -31,18 +29,8 @@ class OrdersController extends Controller
 
     public function show(Request $request, $id)
     {
-        $order = Order::user($request->user->id)
-            ->findOrFail($id);
-
-        $data = [];
-
-        foreach ($order->products as $orderProduct) {
-            array_push($data, $orderProduct->pivot);
-        }
-
-        $order->orderProducts = $data;
-
-        return new OrderResource($order);
+        $transaction = Transaction::findOrFail($id);
+        return new TransactionResource($$transaction);
     }
 
     public function create(Request $request)
