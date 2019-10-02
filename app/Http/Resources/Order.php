@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\Product;
 use Illuminate\Http\Resources\Json\Resource;
 
 class Order extends Resource
@@ -33,8 +34,7 @@ class Order extends Resource
 
             'updated_at' => $this->updated_at,
 
-            'products' => $this->when(
-                $this->orderProducts, $this->orderProducts),
+            'products' => Product::collection($this->products),
         ];
     }
 }
