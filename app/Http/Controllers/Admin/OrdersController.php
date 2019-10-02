@@ -18,7 +18,8 @@ class OrdersController extends Controller
 
     public function index()
     {
-        $transactions = Transaction::paginate();
+        $transactions = Transaction::where('is_verfied', true)
+            ->paginate();
         return TransactionResource::collection($transactions);
     }
 
