@@ -102,6 +102,10 @@ class Zarinpal
             ], 400);
         } else {
             if ($result['Status'] == 100) {
+                foreach ($transaction->order()->products as $product) {
+                    $product->quantity -= $product->pivot->quantity;
+                    $product->save();
+                }
                 $transaction->is_verified = true;
                 $transaction->save();
                 return response()->json([
