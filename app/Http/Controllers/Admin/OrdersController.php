@@ -19,6 +19,7 @@ class OrdersController extends Controller
     public function index()
     {
         $transactions = Transaction::where('is_verified', true)
+            ->orderBy('created_at', 'desc')
             ->paginate();
         return TransactionResource::collection($transactions);
     }
